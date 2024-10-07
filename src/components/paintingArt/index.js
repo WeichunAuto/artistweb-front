@@ -1,30 +1,39 @@
 import React, { Component } from 'react'
-import {Color} from '../../config'
 import axiosInstance from '../../axios/request'
 import eventBus from '../../token/event';
+import ImgsRender from './imgsRender';
 
-import {Image} from "@nextui-org/react";
-// import { PhotoProvider, PhotoView } from 'react-photo-view';
-// import Msg from '../../imgs/msg.png'
-import PImg_1 from '../../imgs/part-1.webp'
-import PImg_2 from '../../imgs/part-2.jpg'
-import PImg_3 from '../../imgs/part-3.webp'
-import PImg_4 from '../../imgs/part-4.jpg'
-import PImg_5 from '../../imgs/part-5.jpg'
-import PImg_6 from '../../imgs/part-6.jpg'
 
 export class PArt extends Component {
 
   state = {
+    paintWorks: [],
     paintWorks_col1: [],
     paintWorks_col2: [],
     paintWorks_col3: [],
+
+    screenWidth: window.innerWidth,
+    screenHeight: window.innerHeight,
   }
   
   async componentDidMount() {
-    eventBus.addListener('synToken', (jwtToken) => {
-      this.loadPaintWorks(jwtToken)
-    })
+    eventBus.addListener('synToken', this.handleTokenEvent)
+    window.addEventListener('resize', this.handleWindowSizeChange)
+  }
+
+  handleTokenEvent = (jwtToken) => {
+    this.loadPaintWorks(jwtToken)
+  }
+  handleWindowSizeChange = () => {
+    this.setState({
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight
+    });
+  }
+
+  componentWillUnmount() {
+    eventBus.removeListener('synToken', this.handleTokenEvent)
+    window.removeEventListener('resize', this.handleWindowSizeChange)
   }
 
   loadPaintWorks = async (jwtToken) => {
@@ -45,6 +54,7 @@ export class PArt extends Component {
           mainData.map(async (aPaintWork) => {
             try {
               const response = await axiosInstance.get(`/getAPaintWork/${aPaintWork.id}/image`, {responseType: "blob"})
+              // console.log(response.data)
               const imageURL = URL.createObjectURL(response.data);
               const tempAPaintWork = { ...aPaintWork, imageURL }
               if(i === 1) {
@@ -57,7 +67,7 @@ export class PArt extends Component {
                 tempPaintWorks_col3.push(tempAPaintWork)
                 i = 1
               }
-              // return { ...aPaintWork, imageURL }
+              return tempAPaintWork
             } catch (error) {
               console.error(
                 "Error fetching image for aPaintWork ID:",
@@ -69,6 +79,7 @@ export class PArt extends Component {
           })
         )
         this.setState({
+          paintWorks: updatedMainData,
           paintWorks_col1: tempPaintWorks_col1,
           paintWorks_col2: tempPaintWorks_col2,
           paintWorks_col3: tempPaintWorks_col3,
@@ -79,139 +90,26 @@ export class PArt extends Component {
   }
 
   render() { 
-    const {paintWorks_col1, paintWorks_col2, paintWorks_col3} = this.state
+    const {paintWorks, paintWorks_col1, paintWorks_col2, paintWorks_col3, screenWidth, screenHeight} = this.state
+    console.log('screenWidth: ', screenWidth)
+    console.log('screenHeight: ', screenHeight)
     return (
-      <div className='w-screen lg:min-w-[1200px] pt-16'>
+      <div className='w-full pt-16'>
         <p className='font-georgian text-5xl lg:text-7xl text-center mb-8'>painting art.</p>
         <p className='w-5/6 font-sans pb-16 text-center text-base word-spacing-wider tracking-widest mx-auto'>download & print. bring street art into your home.</p>
 
-        <div className='w-screen h-auto'>
-          <div className='w-[98%] mx-auto grid grid-cols-3 gap-x-4'>
-
-            {/* the first col */}
-            <div className='flex flex-col'>
-                <div className='font-light'>
-                  <Image
-                    radius='sm'
-                    isZoomed
-                    isBlurred
-                    alt="NextUI hero Image with delay"
-                    src={PImg_1}
-                    fallbackSrc="https://via.placeholder.com/300x200"
-                  />
-                  <p className='mt-4'>I'M AN ART WORK.</p>
-                  <p>$155.00.</p>
-                </div>
-                <div className='font-light'>
-                  <Image
-                    radius='sm'
-                    isZoomed
-                    isBlurred
-                    alt="NextUI hero Image with delay"
-                    src={PImg_4}
-                    fallbackSrc="https://via.placeholder.com/300x200"
-                  />
-                  <p className='mt-4'>I'M AN ART WORK.</p>
-                  <p>$155.00.</p>
-                </div>
-            </div>
-            {/* the second col */}
-            <div className='flex flex-col'>
-                <div className='font-light'>
-                  <Image
-                    radius='sm'
-                    isZoomed
-                    isBlurred
-                    alt="NextUI hero Image with delay"
-                    src={PImg_3}
-                    fallbackSrc="https://via.placeholder.com/300x200"
-                  />
-                  <p className='mt-4'>I'M AN ART WORK.</p>
-                  <p>$155.00.</p>
-                </div>
-                <div className='font-light'>
-                  <Image
-                    radius='sm'
-                    isZoomed
-                    isBlurred
-                    alt="NextUI hero Image with delay"
-                    src={PImg_5}
-                    fallbackSrc="https://via.placeholder.com/300x200"
-                  />
-                  <p className='mt-4'>I'M AN ART WORK.</p>
-                  <p>$155.00.</p>
-                </div>
-            </div>
-
-            {/* the third col */}
-            <div className='flex flex-col'>
-              <div className='font-light'>
-                <Image
-                  radius='sm'
-                  isZoomed
-                  isBlurred
-                  alt="NextUI hero Image with delay"
-                  src={PImg_2}
-                  fallbackSrc="https://via.placeholder.com/300x200"
-                />
-                <p className='mt-4'>I'M AN ART WORK.</p>
-                <p>$155.00.</p>
-              </div>
-              <div className='font-light'>
-                <Image
-                  radius='sm'
-                  isZoomed
-                  isBlurred
-                  alt="NextUI hero Image with delay"
-                  src={PImg_6}
-                  fallbackSrc="https://via.placeholder.com/300x200"
-                />
-                <p className='mt-4'>I'M AN ART WORK.</p>
-                <p>$155.00.</p>
-              </div>
-            </div>
-
-
-            {/* <div className='font-light'>
-              <Image
-                radius='sm'
-                isZoomed
-                
-                alt="NextUI hero Image with delay"
-                src={PImg_4}
-                fallbackSrc="https://via.placeholder.com/300x200"
-              />
-              <p className='mt-4'>I'M AN ART WORK.</p>
-              <p>$155.00.</p>
-            </div>
-
-            <div className='font-light'>
-              <Image
-                radius='sm'
-                isZoomed
-                isBlurred
-                alt="NextUI hero Image with delay"
-                src={PImg_5}
-                fallbackSrc="https://via.placeholder.com/300x200"
-              />
-              <p className='mt-4'>I'M AN ART WORK.</p>
-              <p>$155.00.</p>
-            </div>
-
-            <div className='font-light'>
-              <Image
-                radius='sm'
-                isZoomed
-                isBlurred
-                alt="NextUI hero Image with delay"
-                src={PImg_6}
-                fallbackSrc="https://via.placeholder.com/300x200"
-              />
-              <p className='mt-4'>I'M AN ART WORK.</p>
-              <p>$155.00.</p>
-            </div> */}
-          </div>
+        <div className='w-full h-auto'>
           
+            {
+              screenWidth > 640 
+              ? <ImgsRender size='lg' data={[
+                paintWorks_col1,
+                paintWorks_col2,
+                paintWorks_col3
+              ]}/>
+              : <ImgsRender size='sm' data={paintWorks}/>
+            }
+            
         </div>
       </div>
       
