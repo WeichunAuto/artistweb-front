@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import './css/output.css'
+import WebBody from './components/body'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {NextUIProvider} from "@nextui-org/react";  // 1. import `NextUIProvider` component
+
+import JwtToken from './token/token'
+import eventBus from './token/event'
+
+export class App extends Component {
+
+  async componentDidMount() {
+    const jwtToken = await JwtToken.getToken()
+    eventBus.emit('synToken', jwtToken) // send an event to share the token.
+  }
+
+  render() {
+    return (
+      <NextUIProvider>
+          <WebBody />
+      </NextUIProvider>
+    )
+  }
 }
 
 export default App;
