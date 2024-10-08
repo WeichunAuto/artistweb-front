@@ -1,4 +1,4 @@
-const devBaseUrl = 'http://localhost:8080/users/'
+const devBaseUrl = 'http://192.168.18.41:8080/users/'
 const productBaseUrl = ''
 
 // website related colors

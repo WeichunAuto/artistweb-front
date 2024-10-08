@@ -23,6 +23,7 @@ export class PArt extends Component {
 
   handleTokenEvent = (jwtToken) => {
     this.loadPaintWorks(jwtToken)
+    // alert(jwtToken)
   }
   handleWindowSizeChange = () => {
     this.setState({
@@ -112,48 +113,7 @@ export class PArt extends Component {
             
         </div>
       </div>
-      
     )
-  }
-
-  /**
-   * fetch the about me data with carrying token.
-   * @param {*} token 
-   * @returns 
-   */
-  async requestAboutMe(token) {
-    try {
-      const aboutMeRes = await axiosInstance.post('/aboutme',{}, {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      })
-      return aboutMeRes.data
-      
-    } catch (error) {
-      console.log(error)
-      return null
-    }
-  }
-
-  /**
-   * fetch the unique values with carrying token.
-   * @param {*} token 
-   * @returns 
-   */
-  async requestUniqueValuesRes(token) {
-    try {
-      const uniqueValuesRes = await axiosInstance.post('/uniqueValues',{}, {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      })
-      return uniqueValuesRes.data
-      
-    } catch (error) {
-      console.log(error)
-      return null
-    }
   }
   
 }

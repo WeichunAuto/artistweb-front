@@ -1,9 +1,17 @@
-import React from 'react'
-import { Image } from "@nextui-org/react";
+import React, { useState } from 'react'
+import { Image, useDisclosure } from "@nextui-org/react";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
+import ImgDetail from './imgDetail';
 
-function imgsRender(props) {
+function ImgsRender(props) {
     const { size, data } = props
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [paintWork, setPaintWork] = useState(null)
+
+    const handleImgDetails = (paintWork) => {
+        setPaintWork(paintWork)
+        onOpen()
+    }
 
     let returnElements = null
 
@@ -20,7 +28,7 @@ function imgsRender(props) {
                                     {
                                         paintWorks_col.map((item, index) => {
                                             return (
-                                                <div className='font-light pt-8' key={index}>
+                                                <div className='font-light pt-10' key={index}>
                                                     <PhotoProvider>
                                                         <PhotoView key={index} src={item.imageURL}>
                                                             <Image
@@ -35,8 +43,14 @@ function imgsRender(props) {
                                                             {/* Add more Images here for group view.*/}
                                                         </PhotoView>
                                                     </PhotoProvider>
-                                                    <p className='mt-4'>{item.title}</p>
-                                                    <p>${item.price}.</p>
+                                                    <div className='mt-4 flex flex-col' onClick={() => handleImgDetails(item)}>
+                                                        <div className='flex flex-row'>
+                                                            <p className='w-full text-left cursor-pointer hover:underline tracking-wide hover:text-blue-500'>{item.title}</p>
+                                                            <p className='w-full text-right cursor-pointer'>${item.price}.</p>
+                                                        </div>
+                                                        <div className='text-right text-small text-gray-400 cursor-pointer'>{item.dimensionWidth}mm X {item.dimensionHeight}mm</div>
+                                                    </div>
+
                                                 </div>
                                             );
                                         })
@@ -45,8 +59,13 @@ function imgsRender(props) {
 
                             );
                         })
-
                     }
+                    <ImgDetail
+                        isOpen={isOpen}
+                        onOpen={onOpen}
+                        onClose={onClose}
+                        paintWork={paintWork}
+                    />
                 </div>
                 break
             }
@@ -61,26 +80,41 @@ function imgsRender(props) {
                                         <div className='font-light pt-8' key={index}>
                                             <PhotoProvider>
                                                 <PhotoView key={index} src={item.imageURL}>
-                                                    {/* <Image
+                                                    <Image
                                                 radius='sm'
-                                                isZoomed
+                                                // isZoomed
                                                 isBlurred
-                                                alt="NextUI hero Image with delay"
+                                                alt={item.title}
                                                 src={item.imageURL}
                                                 fallbackSrc="https://via.placeholder.com/300x200"
                                                 key={index}
-                                            /> */}
-                                                    <img src={item.imageURL} alt='' />
+                                            />
+                                                    {/* <img src={item.imageURL} alt='' /> */}
                                                 </PhotoView>
                                             </PhotoProvider>
-                                            <p className='mt-4'>{item.title}</p>
-                                            <p>${item.price}.</p>
+                                            <div className='mt-4 flex flex-col' onClick={() => handleImgDetails(item)}>
+                                                <div className='flex flex-row'>
+                                                    <p className='w-full text-left cursor-pointer hover:underline tracking-wide hover:text-blue-500'>{item.title}</p>
+                                                    <p className='w-full text-right cursor-pointer'>${item.price}.</p>
+                                                </div>
+                                                <div className='flex flex-row mt-1'>
+                                                    <div className='basis-1/2 text-left text-small w-full text-gray-400'>
+                                                        {item.dimensionWidth}mm X {item.dimensionHeight}mm
+                                                    </div>
+                                                    <div className='basis-1/2 text-right'>{'Details >'}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     )
                                 })
                             }
                         </div>
-
+                        <ImgDetail
+                            isOpen={isOpen}
+                            onOpen={onOpen}
+                            onClose={onClose}
+                            paintWork={paintWork}
+                        />
                     </div>
                 break
             }
@@ -93,4 +127,4 @@ function imgsRender(props) {
     return returnElements
 }
 
-export default imgsRender
+export default ImgsRender

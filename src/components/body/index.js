@@ -63,7 +63,7 @@ export default function App() {
   return (
     <>
       {/* Top header for the large screen. */}
-      <div className="w-full h-auto pt-8 z-10 flex flex-col hidden lg:block">
+      <div className="w-full h-auto pt-8 z-10 flex-col hidden lg:block">
         <div className='w-screen flex justify-center'>
           <Logo width='w-30' height='w-30'/>
         </div>
@@ -166,7 +166,7 @@ export default function App() {
         <img src={Bg} alt='this is'/>
       </div>
       
-      <div id="target-part">
+      <div id="target-part border-1">
         <PArt/>
       </div>
             
