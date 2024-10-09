@@ -92,7 +92,7 @@ export default function App() {
           <NavbarContent className="flex justify-between lg:hidden ">
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="sm:hidden md:block"
+              className="lg:hidden sm:block md:block"
             />
             <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
               <Logo width='w-9' height='w-9'/>
