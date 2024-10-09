@@ -1,11 +1,11 @@
 import React from 'react'
 
-function Prices() {
+function AboutMe() {
   return (
     <div className='bg-pink-300 w-screen h-[900px]'>
-      His is the prices.
+      His is the AboutMe.
     </div>
   )
 }
 
-export default Prices
+export default AboutMe

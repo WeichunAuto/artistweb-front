@@ -62,7 +62,6 @@ function ImgsRender(props) {
                     }
                     <ImgDetail
                         isOpen={isOpen}
-                        onOpen={onOpen}
                         onClose={onClose}
                         paintWork={paintWork}
                     />

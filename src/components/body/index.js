@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -8,56 +8,100 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Link,
-  DropdownItem,
   Dropdown,
   DropdownTrigger,
-  DropdownMenu,
   Button
-
 
 } from "@nextui-org/react";
 import { Logo } from "./logo.js";
 import {ChevronDown} from './icons'
 import PArt from "../paintingArt/index.js";
 import Contact from '../contact/index.js'
-import Prices from "../prices/index.js";
+import AboutMe from "../aboutMe/index.js";
 import Bg from '../../imgs/bg.png'
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  // Create a ref for the Contact component
-  const contactRef = useRef(null);
-  const priceRef = useRef(null);
+  const [isPaintLine, setIsPaintLine] = useState('none')
+  const [isAboutLine, setIsAboutLine] = useState('none')
+  const [isContactLine, setIsContactLine] = useState('none')
+  const [isServicesLine, setIsServicesLine] = useState('none')
+
+  const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  // capture current window size
+  useEffect(() => {
+    const handleWindowSizeChange = () => {
+      const currentWindowWidth = window.innerWidth
+      if (currentWindowWidth > 640) { // stick on top if it is not a small screen.
+        setShouldHideOnScroll(false)
+        setIsSmallScreen(false)
+      } else {
+        setShouldHideOnScroll(true)
+        setIsSmallScreen(true)
+      }
+    }
+    window.addEventListener('resize', handleWindowSizeChange)
+    return ()=> {
+      window.removeEventListener('resize', handleWindowSizeChange)
+    }
+  }, [])
 
   // Function to scroll to the Contact section
   const scrollToComponent = (e) => {
-    const targetMenu = e.target.innerText
-    if (targetMenu === 'Features') {
-      if (contactRef.current) {
-        contactRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    } else if(targetMenu === 'Customers') {
-      if (priceRef.current) {
-        priceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-        
-      }
-    }    
+    console.log(isMenuOpen)
+    if (isMenuOpen === true) {
+      setShouldHideOnScroll(false) // If the side menu is open, then stick on scroll.
+    } else if(isSmallScreen === true) {
+      setShouldHideOnScroll(true)
+    }
+    const targetHref = e.target.href
+    // console.log(e.target.href)
+    if (targetHref.endsWith('#target-paint')) {
+      setIsPaintLine('always')
+      setIsAboutLine('none')
+      setIsContactLine('none')
+      setIsServicesLine('none')
+    } else if(targetHref.endsWith('#target-about')) {
+      setIsPaintLine('none')
+      setIsAboutLine('always')
+      setIsContactLine('none')
+      setIsServicesLine('none')
+    } else if(targetHref.endsWith('#target-contact')) {
+      setIsPaintLine('none')
+      setIsAboutLine('none')
+      setIsContactLine('always')
+      setIsServicesLine('none')
+    } else if(targetHref.endsWith('#target-services')) {
+      setIsPaintLine('none')
+      setIsAboutLine('none')
+      setIsContactLine('none')
+      setIsServicesLine('always')
+    } 
   };
 
-  
-
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    {
+      name: "PAINTING ART.",
+      href: "#target-paint",
+      underline: {isPaintLine}
+    },
+    {
+      name: "ABOUT ME.",
+      href: "#target-about",
+      underline: {isAboutLine}
+    },
+    {
+      name: "CONTACT.",
+      href: "#target-contact",
+      underline: {isContactLine}
+    }, {
+      name: "SERVICES.",
+      href: "#target-services",
+      underline: {isServicesLine}
+    }
   ];
 
   return (
@@ -73,11 +117,11 @@ export default function App() {
         </div>
       </div>
 
-        <Navbar
+        <Navbar shouldHideOnScroll={shouldHideOnScroll} 
           onMenuOpenChange={setIsMenuOpen} 
-          className="drop-shadow-sm lg:drop-shadow-none flex items-center"
+          className="drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
         >
-          <NavbarContent className="flex justify-between lg:hidden">
+          <NavbarContent className="flex justify-between lg:hidden ">
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               className="sm:hidden"
@@ -91,18 +135,18 @@ export default function App() {
           <NavbarContent className="hidden lg:flex flex-row justify-items-center">
             
             <NavbarItem className="basis-1/4 text-center">
-              <Link color="foreground" className="text-2xl font-georgian" href="#target-part"  onClick={scrollToComponent}>
+              <Link color="foreground" underline={isPaintLine} className="text-2xl font-georgian" href="#target-paint"  onClick={scrollToComponent}>
               PAINTING ART.
               </Link>
             </NavbarItem>
-            <NavbarItem isActive  className="basis-1/4 text-center">
-              <Link href="#target-prices" className="text-2xl font-georgian" aria-current="page"  onClick={scrollToComponent}>
-              FACE ART.
+            <NavbarItem className="basis-1/4 text-center">
+              <Link color="foreground" underline={isAboutLine} className="text-2xl font-georgian"  href="#target-about" onClick={scrollToComponent}>
+              ABOUT ME.
               </Link>
             </NavbarItem>
-            <NavbarItem  className="basis-1/4 text-center">
-              <Link color="foreground" className="text-2xl font-georgian" href="#">
-              WALL ART.
+            <NavbarItem className="basis-1/4 text-center">
+              <Link color="foreground" underline={isContactLine} className="text-2xl font-georgian" href="#target-contact" onClick={scrollToComponent}>
+              CONTACT.
               </Link>
             </NavbarItem>
             
@@ -111,16 +155,17 @@ export default function App() {
               <DropdownTrigger>
                 <Button
                   disableRipple
+                  isDisabled
                   className="p-0 bg-transparent data-[hover=true]:bg-transparent text-2xl font-georgian"
                   radius="sm"
                   variant="light"
                   endContent={<ChevronDown fill="currentColor" size={18} />}
                 >
-                  MORE.
+                  SERVICES.
                 </Button>
               </DropdownTrigger>
             </NavbarItem>
-            <DropdownMenu className="w-[140px]" itemClasses={{
+            {/* <DropdownMenu className="w-[140px]" itemClasses={{
                 base: "gap-4",
               }}
             >
@@ -134,27 +179,23 @@ export default function App() {
                 CONTACT
               </DropdownItem>
                 
-            </DropdownMenu>
+            </DropdownMenu> */}
             </Dropdown>
             
           </NavbarContent>
 
-          <NavbarMenu>
+          <NavbarMenu className="bg-white bg-opacity-95">
             {menuItems.map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
                 <Link
-                  color={
-                    index === 2
-                      ? "primary"
-                      : index === menuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                  }
+                  color='foreground'
                   className="w-full"
-                  href="#"
+                  href={item.href}
+                  underline={item.underline}
                   size="lg"
+                  onClick={scrollToComponent}
                 >
-                  {item}
+                  {item.name}
                 </Link>
               </NavbarMenuItem>
             ))}
@@ -166,18 +207,19 @@ export default function App() {
         <img src={Bg} alt='this is'/>
       </div>
       
-      <div id="target-part border-1">
+      <div id="target-paint">
         <PArt/>
       </div>
             
+      <div id="target-about">
+        <AboutMe />
+      </div>
             
-      <div id="target-section" className="w-full h-[1000px] bg-purple-200"  ref={contactRef}>
+      <div id="target-contact" className="w-full h-[1000px] bg-purple-200">
         <Contact />
       </div>
 
-      <div id="target-prices" ref={priceRef}>
-        <Prices />
-      </div>
+      
     </>
   );
 }

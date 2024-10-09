@@ -1,9 +1,8 @@
 import React from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Image,Button, Divider, Spacer } from "@nextui-org/react";
-import { BackIcon } from "../body/icons";
+import { Modal, ModalContent, ModalHeader, ModalBody, Image,Button, Divider, Spacer } from "@nextui-org/react";
 
 export default function ImgDetail(props) {
-  const { isOpen, onOpen, onClose, paintWork } = props
+  const { isOpen, onClose, paintWork } = props
 
   // console.log(paintWork)
 
