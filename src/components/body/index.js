@@ -87,12 +87,12 @@ export default function App() {
 
         <Navbar shouldHideOnScroll={shouldHideOnScroll} 
           onMenuOpenChange={setIsMenuOpen} 
-          className="drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
+          className="w-screen lg:min-w-[1200px] drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
         >
           <NavbarContent className="flex justify-between lg:hidden ">
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="sm:hidden"
+              className="sm:hidden md:block"
             />
             <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
               <Logo width='w-9' height='w-9'/>
@@ -137,10 +137,10 @@ export default function App() {
       {/* </div> */}
       <div className="w-screen lg:min-w-[1200px] h-auto bg-blue-100 ">
 
-        <img src={Bg} alt='this is'/>
+        <img src={Bg} alt=''/>
       </div>
       
-      <div id="target-paint">
+      <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
         <PArt/>
       </div>
             
