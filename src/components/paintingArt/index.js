@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import axiosInstance from '../../axios/request'
 import eventBus from '../../token/event';
 import ImgsRender from './imgsRender';
-
+import LoadingAnimation from '../loadingAnimation';
 
 export class PArt extends Component {
 
@@ -11,6 +11,7 @@ export class PArt extends Component {
     paintWorks_col1: [],
     paintWorks_col2: [],
     paintWorks_col3: [],
+    isLoading: true,
 
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
@@ -22,9 +23,10 @@ export class PArt extends Component {
   }
 
   handleTokenEvent = (jwtToken) => {
+    this.setState({isLoading: true})
     this.loadPaintWorks(jwtToken)
-    // alert(jwtToken)
   }
+
   handleWindowSizeChange = () => {
     this.setState({
       screenWidth: window.innerWidth,
@@ -84,33 +86,38 @@ export class PArt extends Component {
           paintWorks_col1: tempPaintWorks_col1,
           paintWorks_col2: tempPaintWorks_col2,
           paintWorks_col3: tempPaintWorks_col3,
-        })
+          isLoading: false
+        })        
     } else {
       console.log('request error.')
     }
   }
 
   render() { 
-    const {paintWorks, paintWorks_col1, paintWorks_col2, paintWorks_col3, screenWidth, screenHeight} = this.state
-    console.log('screenWidth: ', screenWidth)
-    console.log('screenHeight: ', screenHeight)
+    const {paintWorks, paintWorks_col1, paintWorks_col2, paintWorks_col3, screenWidth, isLoading} = this.state
+    // console.log('screenWidth: ', screenWidth)
+    // console.log('screenHeight: ', screenHeight)
+    // console.log(isLoading)
     return (
+      isLoading 
+      ? 
+      <LoadingAnimation />
+      :
       <div className='w-full pt-16'>
         <p className='font-georgian text-5xl lg:text-7xl text-center mb-8'>painting art.</p>
         <p className='w-5/6 font-sans pb-16 text-center text-base word-spacing-wider tracking-widest mx-auto'>download & print. bring street art into your home.</p>
 
         <div className='w-full h-auto'>
-          
             {
               screenWidth > 640 
               ? <ImgsRender size='lg' data={[
                 paintWorks_col1,
                 paintWorks_col2,
                 paintWorks_col3
-              ]}/>
-              : <ImgsRender size='sm' data={paintWorks}/>
+              ]}
+              />
+              : <ImgsRender size='sm' data={paintWorks} />
             }
-            
         </div>
       </div>
     )

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './css/output.css'
 import WebBody from './components/body'
 
-import {NextUIProvider} from "@nextui-org/react";  // 1. import `NextUIProvider` component
+import {NextUIProvider} from "@nextui-org/react"; 
 
 import JwtToken from './token/token'
 import eventBus from './token/event'
@@ -17,7 +17,7 @@ export class App extends Component {
   render() {
     return (
       <NextUIProvider>
-          <WebBody />
+          <WebBody setLoadingStatus={this.setLoadingStatus}/>
       </NextUIProvider>
     )
   }

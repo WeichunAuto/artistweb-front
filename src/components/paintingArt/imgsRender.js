@@ -4,7 +4,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import ImgDetail from './imgDetail';
 
 function ImgsRender(props) {
-    const { size, data } = props
+    const { size, data} = props
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [paintWork, setPaintWork] = useState(null)
 

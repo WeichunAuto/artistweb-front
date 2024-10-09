@@ -16,14 +16,17 @@ import Contact from '../contact/index.js'
 import AboutMe from "../aboutMe/index.js";
 import Bg from '../../imgs/bg.png'
 
-export default function App() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+export default function WebBody() {
+  
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   // capture current window size
   useEffect(() => {
+
     const handleWindowSizeChange = () => {
       const currentWindowWidth = window.innerWidth
       if (currentWindowWidth > 640) { // stick on top if it is not a small screen.
@@ -42,7 +45,7 @@ export default function App() {
 
   // Function to scroll to the Contact section
   const scrollToComponent = (e) => {
-    console.log(isMenuOpen)
+    // console.log(isMenuOpen)
     if (isMenuOpen === true) {
       setShouldHideOnScroll(false) // If the side menu is open, then stick on scroll.
     } else if(isSmallScreen === true) {
@@ -71,7 +74,7 @@ export default function App() {
       isDisabled: true
     }
   ];
-
+  
   return (
     <>
       {/* Top header for the large screen. */}
@@ -141,7 +144,7 @@ export default function App() {
       </div>
       
       <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
-        <PArt/>
+        <PArt />
       </div>
             
       <div id="target-about">
@@ -152,7 +155,7 @@ export default function App() {
         <Contact />
       </div>
 
-      
+     
     </>
   );
 }
