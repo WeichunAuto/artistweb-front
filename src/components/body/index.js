@@ -8,13 +8,9 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Link,
-  Dropdown,
-  DropdownTrigger,
-  Button
 
 } from "@nextui-org/react";
 import { Logo } from "./logo.js";
-import {ChevronDown} from './icons'
 import PArt from "../paintingArt/index.js";
 import Contact from '../contact/index.js'
 import AboutMe from "../aboutMe/index.js";
@@ -22,11 +18,6 @@ import Bg from '../../imgs/bg.png'
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const [isPaintLine, setIsPaintLine] = useState('none')
-  const [isAboutLine, setIsAboutLine] = useState('none')
-  const [isContactLine, setIsContactLine] = useState('none')
-  const [isServicesLine, setIsServicesLine] = useState('none')
 
   const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
@@ -57,57 +48,34 @@ export default function App() {
     } else if(isSmallScreen === true) {
       setShouldHideOnScroll(true)
     }
-    const targetHref = e.target.href
-    // console.log(e.target.href)
-    if (targetHref.endsWith('#target-paint')) {
-      setIsPaintLine('always')
-      setIsAboutLine('none')
-      setIsContactLine('none')
-      setIsServicesLine('none')
-    } else if(targetHref.endsWith('#target-about')) {
-      setIsPaintLine('none')
-      setIsAboutLine('always')
-      setIsContactLine('none')
-      setIsServicesLine('none')
-    } else if(targetHref.endsWith('#target-contact')) {
-      setIsPaintLine('none')
-      setIsAboutLine('none')
-      setIsContactLine('always')
-      setIsServicesLine('none')
-    } else if(targetHref.endsWith('#target-services')) {
-      setIsPaintLine('none')
-      setIsAboutLine('none')
-      setIsContactLine('none')
-      setIsServicesLine('always')
-    } 
   };
 
   const menuItems = [
     {
       name: "PAINTING ART.",
       href: "#target-paint",
-      underline: {isPaintLine}
+      isDisabled: false
     },
     {
       name: "ABOUT ME.",
       href: "#target-about",
-      underline: {isAboutLine}
+      isDisabled: false
     },
     {
       name: "CONTACT.",
       href: "#target-contact",
-      underline: {isContactLine}
+      isDisabled: false
     }, {
       name: "SERVICES.",
       href: "#target-services",
-      underline: {isServicesLine}
+      isDisabled: true
     }
   ];
 
   return (
     <>
       {/* Top header for the large screen. */}
-      <div className="w-full h-auto pt-8 z-10 flex-col hidden lg:block">
+      <div className="w-full lg:min-w-[1200px] h-auto pt-8 z-10 flex-col hidden lg:block">
         <div className='w-screen flex justify-center'>
           <Logo width='w-30' height='w-30'/>
         </div>
@@ -132,67 +100,32 @@ export default function App() {
             </NavbarBrand>
           </NavbarContent>
 
+          {/* menus for large screen */}
           <NavbarContent className="hidden lg:flex flex-row justify-items-center">
-            
-            <NavbarItem className="basis-1/4 text-center">
-              <Link color="foreground" underline={isPaintLine} className="text-2xl font-georgian" href="#target-paint"  onClick={scrollToComponent}>
-              PAINTING ART.
-              </Link>
-            </NavbarItem>
-            <NavbarItem className="basis-1/4 text-center">
-              <Link color="foreground" underline={isAboutLine} className="text-2xl font-georgian"  href="#target-about" onClick={scrollToComponent}>
-              ABOUT ME.
-              </Link>
-            </NavbarItem>
-            <NavbarItem className="basis-1/4 text-center">
-              <Link color="foreground" underline={isContactLine} className="text-2xl font-georgian" href="#target-contact" onClick={scrollToComponent}>
-              CONTACT.
-              </Link>
-            </NavbarItem>
-            
-            <Dropdown>
-            <NavbarItem>
-              <DropdownTrigger>
-                <Button
-                  disableRipple
-                  isDisabled
-                  className="p-0 bg-transparent data-[hover=true]:bg-transparent text-2xl font-georgian"
-                  radius="sm"
-                  variant="light"
-                  endContent={<ChevronDown fill="currentColor" size={18} />}
-                >
-                  SERVICES.
-                </Button>
-              </DropdownTrigger>
-            </NavbarItem>
-            {/* <DropdownMenu className="w-[140px]" itemClasses={{
-                base: "gap-4",
-              }}
-            >
-              <DropdownItem key="Services">
-                SERVICES
-              </DropdownItem>
-              <DropdownItem key="ABOUT_ME">
-                ABOUT ME
-              </DropdownItem>
-              <DropdownItem key="CONTACT">
-                CONTACT
-              </DropdownItem>
+            {
+              menuItems.map((item, index) => {
                 
-            </DropdownMenu> */}
-            </Dropdown>
-            
+                return(
+                  <NavbarItem key={`${item}-${index}`} className="basis-1/4 text-center">
+                    <Link color="foreground" isDisabled={item.isDisabled} className="text-2xl font-georgian" href={item.href}  onClick={scrollToComponent}>
+                      {item.name}
+                    </Link>
+                  </NavbarItem>
+                )
+              })
+            }
           </NavbarContent>
 
-          <NavbarMenu className="bg-white bg-opacity-95">
+          {/* menus for mobile phone screen */}
+          <NavbarMenu className="bg-white bg-opacity-90">
             {menuItems.map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
                 <Link
                   color='foreground'
-                  className="w-full"
+                  className="w-full text-lg"
                   href={item.href}
-                  underline={item.underline}
                   size="lg"
+                  isDisabled={item.isDisabled}
                   onClick={scrollToComponent}
                 >
                   {item.name}
