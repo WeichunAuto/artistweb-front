@@ -8471,6 +8471,18 @@ video {
   .md\:h-\[300px\] {
     height: 300px;
   }
+
+  .md\:h-\[650px\] {
+    height: 650px;
+  }
+
+  .md\:h-\[630px\] {
+    height: 630px;
+  }
+
+  .md\:h-\[330px\] {
+    height: 330px;
+  }
 }
 
 @media (min-width: 1024px) {

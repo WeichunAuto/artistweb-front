@@ -20,7 +20,7 @@ export default function ImgDetail(props) {
             <>
               <ModalHeader className="flex flex-col gap-1 font-normal text-base">
                 {/* {'< back'} */}
-                <Button className='w-16 text-pink-400 hover:bg-green-200' color="primary" variant="light" onPress={onClose}>
+                <Button className='w-16 text-pink-400' color="primary" variant="light" onPress={onClose}>
                   {'< back'}
                 </Button>
               </ModalHeader>

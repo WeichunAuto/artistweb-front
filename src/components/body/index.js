@@ -26,7 +26,6 @@ export default function WebBody() {
 
   // capture current window size
   useEffect(() => {
-
     const handleWindowSizeChange = () => {
       const currentWindowWidth = window.innerWidth
       if (currentWindowWidth > 640) { // stick on top if it is not a small screen.
@@ -41,13 +40,13 @@ export default function WebBody() {
     return ()=> {
       window.removeEventListener('resize', handleWindowSizeChange)
     }
-  }, [])
+  }, [isMenuOpen])
 
   // Function to scroll to the Contact section
   const scrollToComponent = (e) => {
-    // console.log(isMenuOpen)
     if (isMenuOpen === true) {
       setShouldHideOnScroll(false) // If the side menu is open, then stick on scroll.
+      setIsMenuOpen(!isMenuOpen) // close the menu after clicking.
     } else if(isSmallScreen === true) {
       setShouldHideOnScroll(true)
     }
@@ -89,13 +88,13 @@ export default function WebBody() {
       </div>
 
         <Navbar shouldHideOnScroll={shouldHideOnScroll} 
-          onMenuOpenChange={setIsMenuOpen} 
+          isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
           className="w-screen lg:min-w-[1200px] drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
         >
           <NavbarContent className="flex justify-between lg:hidden ">
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="lg:hidden sm:block md:block"
+              className="lg:hidden sm:block md:block w-12"
             />
             <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
               <Logo width='w-9' height='w-9'/>

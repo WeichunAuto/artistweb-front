@@ -11,7 +11,7 @@ function AboutMe() {
 
       <div className='w-full h-auto relative pt-10 pb-6 bg-pink-400'>
 
-        <div className='pb-10 w-11/12 lg:w-4/5 xl:w-3/4 2xl:w-3/4 h-[560px] sm:h-[320px] md:h-[300px] lg:h-[350px] xl:h-[350px] mx-auto mt-10 bg-white rounded-lg drop-shadow-lg'>
+        <div className='pb-10 w-11/12 lg:w-4/5 xl:w-3/4 2xl:w-3/4 h-[560px] sm:h-[320px] md:h-[330px] lg:h-[350px] xl:h-[350px] mx-auto mt-10 bg-white rounded-lg drop-shadow-lg'>
         </div>
         <div className=' h-auto w-full m-auto absolute top-5'>
           <div className='size-24 sm:size-20 lg:size-28 xl:size-32 2xl:size-36 m-auto rounded-full'>
