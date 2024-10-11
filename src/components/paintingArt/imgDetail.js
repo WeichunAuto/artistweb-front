@@ -20,22 +20,22 @@ export default function ImgDetail(props) {
             <>
               <ModalHeader className="flex flex-col gap-1 font-normal text-base">
                 {/* {'< back'} */}
-                <Button className='w-16' color="primary" variant="light" onPress={onClose}>
+                <Button className='w-16 text-pink-400 hover:bg-green-200' color="primary" variant="light" onPress={onClose}>
                   {'< back'}
                 </Button>
               </ModalHeader>
               <ModalBody>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 px-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-20 px-2 lg:px-12">
                   <div>
                     <Image
                       radius='none'
-                      isBlurred
+                      // isBlurred
                       alt={paintWork.title}
                       src={paintWork.imageURL}
                       fallbackSrc="https://via.placeholder.com/300x200"
                     />
                   </div>
-                  <div className="flex flex-col pr-10">
+                  <div className="flex flex-col pr-10 pt-8 lg:pt-0">
                     <p className="text-left text-2xl word-spacing-wide">{paintWork.title}</p>
                     <Divider orientation="horizontal" className="mt-6 mb-8" />
                     <p className=" mb-2 text-large text-right"><span className="">${paintWork.price}</span></p>

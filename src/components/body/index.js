@@ -147,7 +147,7 @@ export default function WebBody() {
         <PArt />
       </div>
             
-      <div id="target-about">
+      <div id="target-about" className="w-screen lg:min-w-[1200px] h-auto">
         <AboutMe />
       </div>
             
