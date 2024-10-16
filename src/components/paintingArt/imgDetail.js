@@ -61,12 +61,6 @@ export default function ImgDetail(props) {
                   </div>
                 </div>
               </ModalBody>
-              {/* <ModalFooter>
-                <Button className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg" onPress={onClose} startContent={<BackIcon />}>
-                  Back
-                </Button>
-              </ModalFooter> */}
-
             </>
           )}
         </ModalContent>

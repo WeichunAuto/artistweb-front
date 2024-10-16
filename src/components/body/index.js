@@ -150,7 +150,7 @@ export default function WebBody() {
         <AboutMe />
       </div>
             
-      <div id="target-contact" className="w-full h-[1000px] bg-purple-200">
+      <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
         <Contact />
       </div>
 
