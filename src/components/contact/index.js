@@ -23,7 +23,9 @@ export class Contact extends Component {
     isMessageInvalid: false,
 
     isOpen: false,
-    jwtToken: ''
+    jwtToken: '',
+
+    isLoading: false
   }
 
   componentDidMount() {
@@ -53,6 +55,7 @@ export class Contact extends Component {
    */
   handleSubmit = () => {
     if (!this.validateFields()) return false
+    this.setState({isLoading: true})
 
     const contactData = {
       firstName: this.state.firstName,
@@ -78,6 +81,7 @@ export class Contact extends Component {
       const statusCode = response.status
       if(statusCode === 201) {
         this.updatePops()
+        this.setState({isLoading: false})
       } else if(statusCode === 401) {
         console.log('invalid token.....')
         window.location.reload()
@@ -141,7 +145,7 @@ export class Contact extends Component {
   }
 
   render() {
-    const { firstName, lastName, email, phoneNumber, message, subscribe, isFirstNameInvalid, isLastNameInvalid, isEmailInvalid, isPhoneNumberInvalid, isMessageInvalid, isOpen } = this.state
+    const { firstName, lastName, email, phoneNumber, message, subscribe, isFirstNameInvalid, isLastNameInvalid, isEmailInvalid, isPhoneNumberInvalid, isMessageInvalid, isOpen, isLoading } = this.state
     return (
       <div className='w-full pt-16 h-auto'>
         <p className='font-georgian text-5xl lg:text-7xl text-center mb-8'>get in touch.</p>
@@ -213,11 +217,11 @@ export class Contact extends Component {
               </div>
 
               <div className='mt-10 w-full flex justify-end'>
-                <Popover placement="bottom" showArrow={true} isOpen={isOpen}>
+                <Popover placement="bottom" showArrow={true} isOpen={isOpen} backdrop='opaque'>
                   <PopoverTrigger>
                     <Button
                       startContent={<HeartIcon width='20px' height='20px' />}
-                      isLoading={false}
+                      isLoading={isLoading}
                       className='bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg'
                       onClick={this.handleSubmit}
                     >
