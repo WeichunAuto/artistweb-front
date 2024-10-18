@@ -14,6 +14,7 @@ import { Logo } from "./logo.js";
 import PArt from "../paintingArt/index.js";
 import Contact from '../contact/index.js'
 import AboutMe from "../aboutMe/index.js";
+import Footer from "../footer/index.js";
 import Bg from '../../imgs/bg.png'
 
 
@@ -154,6 +155,9 @@ export default function WebBody() {
         <Contact />
       </div>
 
+      <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
+        <Footer />
+      </div>
      
     </>
   );
