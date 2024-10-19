@@ -8,7 +8,7 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Link,
-
+  Tooltip
 } from "@nextui-org/react";
 import { Logo } from "./logo.js";
 import PArt from "../paintingArt/index.js";
@@ -16,10 +16,11 @@ import Contact from '../contact/index.js'
 import AboutMe from "../aboutMe/index.js";
 import Footer from "../footer/index.js";
 import Bg from '../../imgs/bg.png'
+import {SnailIcon} from './icons.js'
 
 
 export default function WebBody() {
-  
+
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false)
@@ -38,7 +39,7 @@ export default function WebBody() {
       }
     }
     window.addEventListener('resize', handleWindowSizeChange)
-    return ()=> {
+    return () => {
       window.removeEventListener('resize', handleWindowSizeChange)
     }
   }, [isMenuOpen])
@@ -48,7 +49,7 @@ export default function WebBody() {
     if (isMenuOpen === true) {
       setShouldHideOnScroll(false) // If the side menu is open, then stick on scroll.
       setIsMenuOpen(!isMenuOpen) // close the menu after clicking.
-    } else if(isSmallScreen === true) {
+    } else if (isSmallScreen === true) {
       setShouldHideOnScroll(true)
     }
   };
@@ -74,83 +75,105 @@ export default function WebBody() {
       isDisabled: true
     }
   ];
-  
+
   return (
     <>
       {/* Top header for the large screen. */}
       <div className="w-full lg:min-w-[1200px] h-auto pt-8 z-10 flex-col hidden lg:block">
         <div className='w-screen flex justify-center'>
-          <Logo width='w-30' height='w-30'/>
+          <Logo width='w-30' height='w-30' />
         </div>
-        
+
         <div className='w-screen text-center font-sans mt-8 mb-8'>
           <span className="border-t-1 border-slate-500 pt-2 text-base word-spacing-wider tracking-widest">the urban art portfolio</span>
         </div>
       </div>
 
-        <Navbar shouldHideOnScroll={shouldHideOnScroll} 
-          isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
-          className="w-screen lg:min-w-[1200px] drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
-        >
-          <NavbarContent className="flex justify-between lg:hidden ">
-            <NavbarMenuToggle
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="lg:hidden sm:block md:block w-12"
-            />
-            <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
-              <Logo width='w-9' height='w-9'/>
-              <p className="font-bold text-inherit">GOLNAZ</p>
-            </NavbarBrand>
-          </NavbarContent>
+      <Navbar shouldHideOnScroll={shouldHideOnScroll}
+        isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
+        className="w-screen lg:min-w-[1200px] drop-shadow-sm lg:drop-shadow-none flex items-center bg-white bg-opacity-96"
+      >
+        <NavbarContent className="flex justify-between lg:hidden ">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="lg:hidden sm:block md:block w-12"
+          />
+          <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
+            <Logo width='w-9' height='w-9' />
+            <p className="font-bold text-inherit">GOLNAZ</p>
+          </NavbarBrand>
+        </NavbarContent>
 
-          {/* menus for large screen */}
-          <NavbarContent className="hidden lg:flex flex-row justify-items-center">
-            {
-              menuItems.map((item, index) => {
-                
-                return(
+        {/* menus for large screen */}
+        <NavbarContent className="hidden lg:flex flex-row justify-items-center">
+          {
+            menuItems.map((item, index) => {
+
+              if (item.isDisabled) {
+                return (
+                  <Tooltip
+                    color="secondary"
+                    showArrow={true}
+                    content={
+                      <div className="px-1 py-2 flex flex-row gap-2">
+                        <SnailIcon className='w-7'/> 
+                        <div className="text-tiny content-end">Hatching...</div>
+                      </div>
+                    }
+                  >
+                    <NavbarItem key={`${item}-${index}`} className="basis-1/4 text-center">
+                      <Link color="foreground" isDisabled={item.isDisabled} className="text-2xl font-georgian" href={item.href} onClick={scrollToComponent}>
+                        {item.name}
+                      </Link>
+                    </NavbarItem>
+                  </Tooltip>
+                )
+              } else {
+
+                return (
                   <NavbarItem key={`${item}-${index}`} className="basis-1/4 text-center">
-                    <Link color="foreground" isDisabled={item.isDisabled} className="text-2xl font-georgian" href={item.href}  onClick={scrollToComponent}>
+                    <Link color="foreground" isDisabled={item.isDisabled} className="text-2xl font-georgian" href={item.href} onClick={scrollToComponent}>
                       {item.name}
                     </Link>
                   </NavbarItem>
                 )
-              })
-            }
-          </NavbarContent>
+              }
+            })
+          }
+        </NavbarContent>
 
-          {/* menus for mobile phone screen */}
-          <NavbarMenu className="bg-white bg-opacity-90">
-            {menuItems.map((item, index) => (
-              <NavbarMenuItem key={`${item}-${index}`}>
-                <Link
-                  color='foreground'
-                  className="w-full text-lg"
-                  href={item.href}
-                  size="lg"
-                  isDisabled={item.isDisabled}
-                  onClick={scrollToComponent}
-                >
-                  {item.name}
-                </Link>
-              </NavbarMenuItem>
-            ))}
-          </NavbarMenu>
-        </Navbar>
+        {/* menus for mobile phone screen */}
+        <NavbarMenu className="bg-white bg-opacity-90">
+          {menuItems.map((item, index) => (
+            <NavbarMenuItem key={`${item}-${index}`}>
+              <Link
+                color='foreground'
+                className="w-full text-lg"
+                href={item.href}
+                size="lg"
+                isDisabled={item.isDisabled}
+                onClick={scrollToComponent}
+              >
+                {item.name}
+              </Link>
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
+      </Navbar>
       {/* </div> */}
       <div className="w-screen lg:min-w-[1200px] h-auto bg-blue-100 ">
 
-        <img src={Bg} alt=''/>
+        <img src={Bg} alt='' />
       </div>
-      
+
       <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
         <PArt />
       </div>
-            
+
       <div id="target-about" className="w-screen lg:min-w-[1200px] h-auto">
         <AboutMe />
       </div>
-            
+
       <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
         <Contact />
       </div>
@@ -158,7 +181,7 @@ export default function WebBody() {
       <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
         <Footer />
       </div>
-     
+
     </>
   );
 }
