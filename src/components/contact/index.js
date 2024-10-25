@@ -71,7 +71,7 @@ export class Contact extends Component {
       new Blob([JSON.stringify(contactData)], { type: "application/json" })
     );
 
-    console.log(contactData)
+    // console.log(contactData)
     axiosInstance.post("/sendMessage", formData, {
       headers: {
         'Authorization': 'Bearer ' + this.state.jwtToken
@@ -87,8 +87,6 @@ export class Contact extends Component {
         window.location.reload()
       }
     })
-
-    
   }
 
   /**

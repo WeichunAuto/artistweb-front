@@ -112,6 +112,7 @@ export default function WebBody() {
               if (item.isDisabled) {
                 return (
                   <Tooltip
+                    key={index}
                     color="secondary"
                     showArrow={true}
                     content={
