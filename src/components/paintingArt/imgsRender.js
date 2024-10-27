@@ -13,6 +13,10 @@ function ImgsRender(props) {
         onOpen()
     }
 
+    const clickTest = (visible, index, state) => {
+        console.log(visible, index, state);
+    }
+
     let returnElements = null
 
     switch (size) {
@@ -77,7 +81,7 @@ function ImgsRender(props) {
                                 data.map((item, index) => {
                                     return (
                                         <div className='font-light pt-8' key={index}>
-                                            <PhotoProvider>
+                                            <PhotoProvider onVisibleChange={clickTest}>
                                                 <PhotoView key={index} src={item.imageURL}>
                                                     <Image
                                                 radius='sm'

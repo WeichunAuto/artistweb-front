@@ -56,7 +56,7 @@ export class PArt extends Component {
         const updatedMainData = await Promise.all(
           mainData.map(async (aPaintWork) => {
             try {
-              const response = await axiosInstance.get(`/getAPaintWork/${aPaintWork.id}/image`, {responseType: "blob"})
+              const response = await axiosInstance.get(`/getPaintWorkCover/${aPaintWork.id}/image`, {responseType: "blob"})
               // console.log(response.data)
               const imageURL = URL.createObjectURL(response.data);
               const tempAPaintWork = { ...aPaintWork, imageURL }
@@ -95,9 +95,7 @@ export class PArt extends Component {
 
   render() { 
     const {paintWorks, paintWorks_col1, paintWorks_col2, paintWorks_col3, screenWidth, isLoading} = this.state
-    // console.log('screenWidth: ', screenWidth)
-    // console.log('screenHeight: ', screenHeight)
-    // console.log(isLoading)
+
     return (
       isLoading 
       ? 

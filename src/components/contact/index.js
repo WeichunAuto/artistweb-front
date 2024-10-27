@@ -149,7 +149,7 @@ export class Contact extends Component {
         <p className='font-georgian text-5xl lg:text-7xl text-center mb-8'>get in touch.</p>
         <p className='w-5/6 font-sans pb-16 text-center text-base word-spacing-wider tracking-widest mx-auto'>download & print. bring street art into your home.</p>
 
-        <div className='w-full h-auto relative pt-6 pb-6 bg-pink-400'>
+        <div className='w-full h-auto relative pt-2 pb-6 bg-pink-400'>
           <div className='pb-10 w-11/12 lg:w-4/5 xl:w-2/3 2xl:xl:w-2/3 h-auto mx-auto bg-white rounded-lg drop-shadow-lg'>
             <div className='px-6 lg:px-28 pt-8 lg:pt-12'>
               <div className='flex flex-col lg:flex-row gap-6 lg:gap-8'>

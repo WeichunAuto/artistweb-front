@@ -145,7 +145,7 @@ function AboutMe() {
                 className={`py-5 sm:py-5 lg:py-10 w-11/12 sm:w-11/12 lg:w-[98%] h-auto lg:h-[630px] mx-auto mt-2 bg-white rounded-lg drop-shadow-lg flex flex-col sm:flex-col ${reverseStyle} justify-center justify-items-center`}
               >
                 <div className="basis-1/2">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center px-4 lg:px-8">
                     <Image
                       radius="sm"
                       isBlurred
