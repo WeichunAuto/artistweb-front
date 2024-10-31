@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Image, useDisclosure } from "@nextui-org/react";
-import { PhotoProvider, PhotoView } from 'react-photo-view';
 import ImgDetail from './imgDetail';
 
 function ImgsRender(props) {
@@ -33,8 +32,7 @@ function ImgsRender(props) {
                                         paintWorks_col.map((item, index) => {
                                             return (
                                                 <div className='font-light pt-10' key={index}>
-                                                    <PhotoProvider>
-                                                        <PhotoView key={index} src={item.imageURL}>
+                                                    
                                                             <Image
                                                                 radius='sm'
                                                                 isZoomed
@@ -43,10 +41,11 @@ function ImgsRender(props) {
                                                                 src={item.imageURL}
                                                                 fallbackSrc="https://via.placeholder.com/300x200"
                                                                 key={index}
+                                                                
                                                             />
-                                                            {/* Add more Images here for group view.*/}
-                                                        </PhotoView>
-                                                    </PhotoProvider>
+                                                            
+                                                        
+                                                    
                                                     <div className='mt-4 flex flex-col' onClick={() => handleImgDetails(item)}>
                                                         <div className='flex flex-row'>
                                                             <p className='w-full text-left cursor-pointer hover:underline tracking-wide hover:text-blue-500'>{item.title}</p>
@@ -81,8 +80,7 @@ function ImgsRender(props) {
                                 data.map((item, index) => {
                                     return (
                                         <div className='font-light pt-8' key={index}>
-                                            <PhotoProvider onVisibleChange={clickTest}>
-                                                <PhotoView key={index} src={item.imageURL}>
+                                            
                                                     <Image
                                                 radius='sm'
                                                 // isZoomed
@@ -92,9 +90,7 @@ function ImgsRender(props) {
                                                 fallbackSrc="https://via.placeholder.com/300x200"
                                                 key={index}
                                             />
-                                                    {/* <img src={item.imageURL} alt='' /> */}
-                                                </PhotoView>
-                                            </PhotoProvider>
+                                                    
                                             <div className='mt-4 flex flex-col' onClick={() => handleImgDetails(item)}>
                                                 <div className='flex flex-row'>
                                                     <p className='w-full text-left cursor-pointer hover:underline tracking-wide hover:text-blue-500'>{item.title}</p>

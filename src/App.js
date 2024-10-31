@@ -17,7 +17,7 @@ export class App extends Component {
   render() {
     return (
       <NextUIProvider>
-          <WebBody setLoadingStatus={this.setLoadingStatus}/>
+          <WebBody />
       </NextUIProvider>
     )
   }
