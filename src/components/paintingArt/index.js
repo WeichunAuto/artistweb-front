@@ -58,7 +58,7 @@ export class PArt extends Component {
             try {
               const response = await axiosInstance.get(`/getPaintWorkCover/${aPaintWork.id}/image`, {responseType: "blob"})
               const imageURL = URL.createObjectURL(response.data);
-              console.log(imageURL)
+              // console.log(imageURL)
               const tempAPaintWork = { ...aPaintWork, imageURL }
               if(i === 1) {
                 tempPaintWorks_col1.push(tempAPaintWork)
@@ -81,7 +81,7 @@ export class PArt extends Component {
             }
           })
         )
-        console.log(updatedMainData)
+        // console.log(updatedMainData)
         this.setState({
           paintWorks: updatedMainData,
           paintWorks_col1: tempPaintWorks_col1,

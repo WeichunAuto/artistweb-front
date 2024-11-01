@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {useState} from "react";
 
 export const ChevronDown = ({ fill, size, height, width, ...props }) => {
   return (
@@ -326,3 +326,41 @@ export const SnailIcon = (props) => (
     </g>
   </svg>
 );
+
+
+export const CloseIcon = (props) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <svg
+      width="35px"
+      height="35px"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      fill={isHovered ? "#4679b2" : "#ffffff"} // Change color on hover
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      {...props}
+    >
+      <defs>
+        <filter id="drop-shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow
+            dx="1"
+            dy="1"
+            stdDeviation="1"
+            floodColor="black"
+            floodOpacity="0.6"
+          />
+        </filter>
+      </defs>
+
+      {/* Apply the filter to the path */}
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.647-3.646-.707-.708L8 7.293 4.354 3.646l-.707.708L7.293 8l-3.646 3.646.707.708L8 8.707z"
+        filter="url(#drop-shadow)" // Apply the drop shadow filter here
+      />
+    </svg>
+  );
+};
