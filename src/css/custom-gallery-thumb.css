@@ -1,0 +1,28 @@
+.image-gallery-thumbnail {
+    border: 0;
+    width: 85px;
+    padding: 0px;
+    height: 85px;
+    border-radius: 8px;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            outline: none;
+            border: 0;
+
+            @media (max-width: 768px) {
+                border: 2px solid transparent;
+            }
+        }
+    }
+
+    &.active,
+    &:focus {
+        outline: none;
+        border: 0;
+
+        @media (max-width: 640px) {
+            border: 2px solid transparent;
+          }
+    }
+}

@@ -27,14 +27,15 @@ function ImgsRender(props) {
     setJwtToken(jwtToken);
   };
 
-  const handleImgDetails = (paintWork) => {
+  const handleImgDetails = async (paintWork) => {
     setPaintWork(paintWork);
+    await loadDecorations(paintWork.id);
     onOpen();
   };
 
   /**
    * -> Load decoration photo after clicking a paint work.
-   * 1. This function will first get galleryItems from the cache. 
+   * 1. This function will first get galleryItems from the cache.
    * 2. It will fetch galleryItems from the API if the cache doesn't exist.
    * 3. The newly fetched galleryItems will also be saved into the cache for the next use.
    * @param {*} paintWorkId
@@ -79,10 +80,13 @@ function ImgsRender(props) {
         [paintWorkId]: galleryItems,
       }); // put the fetched galerry items into cache.
     }
-
     setGalleryItems(galleryItems);
-    setIsShowGallery(true); // open the gallery
   };
+
+  const openGallery = async (paintWorkId) => {
+    await loadDecorations(paintWorkId)
+    setIsShowGallery(true); // open the gallery
+  }
 
   let returnElements = null;
 
@@ -105,7 +109,7 @@ function ImgsRender(props) {
                         fallbackSrc="https://via.placeholder.com/300x200"
                         key={index}
                         loading="lazy"
-                        onClick={() => loadDecorations(item.id)}
+                        onClick={() => openGallery(item.id)}
                       />
 
                       <div
@@ -130,7 +134,12 @@ function ImgsRender(props) {
               </div>
             );
           })}
-          <ImgDetail isOpen={isOpen} onClose={onClose} paintWork={paintWork} />
+          <ImgDetail
+            isOpen={isOpen}
+            onClose={onClose}
+            paintWork={paintWork}
+            items={galleryItems}
+          />
           <Gallery
             items={galleryItems}
             isShowGallery={isShowGallery}
@@ -155,7 +164,7 @@ function ImgsRender(props) {
                     src={item.imageURL}
                     fallbackSrc="https://via.placeholder.com/300x200"
                     key={index}
-                    onClick={() => loadDecorations(item.id)}
+                    onClick={() => openGallery(item.id)}
                   />
 
                   <div
@@ -186,6 +195,7 @@ function ImgsRender(props) {
             onOpen={onOpen}
             onClose={onClose}
             paintWork={paintWork}
+            items={galleryItems}
           />
           <Gallery
             items={galleryItems}

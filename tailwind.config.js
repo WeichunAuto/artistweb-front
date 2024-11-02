@@ -9,6 +9,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      borderColor: {
+        'red-custom': '#ff0000', // Replace this with your desired shade of red
+      },
+      borderWidth: {
+        '3': '3px', // Optional: if you want a specific width
+      },
       fontFamily: {
         georgian: ['Georgian'],
       },
