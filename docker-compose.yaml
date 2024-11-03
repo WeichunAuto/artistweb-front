@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  artistweb-front:
+    build: .
+    container_name: artistweb-front_c
+    ports:
+      - "3001:3001"
+    stdin_open: true
+    tty: true
