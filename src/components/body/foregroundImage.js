@@ -3,8 +3,8 @@ import axiosInstance from "../../axios/request";
 import eventBus from "../../token/event";
 import { Image } from "@nextui-org/react";
 
-export function Logo(props) {
-  const { logoSrc, setLogoSrc } = props
+export function ForegroundImage(props) {
+  const { foregroundImageSrc, setForegroundImageSrc } = props
 
   const [jwtToken, setJwtToken] = useState("");
 
@@ -18,8 +18,8 @@ export function Logo(props) {
   });
 
   useEffect(()=>{
-    if(jwtToken !== "" && logoSrc === "") {
-      loadLogo(jwtToken);
+    if(jwtToken !== "" && foregroundImageSrc === "") {
+      loadForegroundImage(jwtToken);
     }
   })
 
@@ -27,10 +27,10 @@ export function Logo(props) {
     setJwtToken(jwtToken);
   };
 
-  const loadLogo = (jwtToken) => {
-    if (logoSrc === "") {
+  const loadForegroundImage = (jwtToken) => {
+    if (foregroundImageSrc === "") {
       axiosInstance
-        .get("/fetchSavedLogo/image", {
+        .get("/fetchSavedForegroundImage/image", {
           responseType: "blob",
           headers: {
             Authorization: "Bearer " + jwtToken,
@@ -40,7 +40,7 @@ export function Logo(props) {
           const statusCode = response.status;
           if (statusCode === 200) {
             const imageURL = URL.createObjectURL(response.data);
-            setLogoSrc(imageURL);
+            setForegroundImageSrc(imageURL);
           }
         });
     }
@@ -48,9 +48,9 @@ export function Logo(props) {
 
   return (
     <>
-      <Image className="w-full h-full rounded-none" src={logoSrc} alt="logo" />
+      <Image className="w-full h-full rounded-none" src={foregroundImageSrc} alt="logo" />
     </>
   );
 }
 
-export default Logo;
+export default ForegroundImage;

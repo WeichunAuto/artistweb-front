@@ -10,12 +10,13 @@ import {
   Link,
   Tooltip
 } from "@nextui-org/react";
-import { Logo } from "./logo.js";
+import  Logo from "./logo.js";
+import ForegroundImage from "./foregroundImage.js";
 import PArt from "../paintingArt/index.js";
 import Contact from '../contact/index.js'
 import AboutMe from "../aboutMe/index.js";
 import Footer from "../footer/index.js";
-import Bg from '../../imgs/bg.png'
+// import Bg from '../../imgs/bg.png'
 import {SnailIcon} from './icons.js'
 
 
@@ -25,6 +26,9 @@ export default function WebBody() {
 
   const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  const [logoSrc, setLogoSrc] = useState("");
+  const [foregroundImageSrc, setForegroundImageSrc] = useState("");
 
   // capture current window size
   useEffect(() => {
@@ -79,12 +83,15 @@ export default function WebBody() {
   return (
     <>
       {/* Top header for the large screen. */}
-      <div className="w-full lg:min-w-[1200px] h-auto pt-8 z-10 flex-col hidden lg:block">
+      <div className="w-full lg:min-w-[1200px] h-auto pt-4 z-10 flex-col hidden lg:block">
         <div className='w-screen flex justify-center'>
-          <Logo width='w-30' height='w-30' />
+          <div className="size-32">
+          <Logo logoSrc={logoSrc} setLogoSrc={setLogoSrc} />
+          </div>
+          
         </div>
 
-        <div className='w-screen text-center font-sans mt-8 mb-8'>
+        <div className='w-screen text-center font-sans mt-4 mb-8'>
           <span className="border-t-1 border-slate-500 pt-2 text-base word-spacing-wider tracking-widest">the urban art portfolio</span>
         </div>
       </div>
@@ -99,7 +106,10 @@ export default function WebBody() {
             className="lg:hidden sm:block md:block w-12"
           />
           <NavbarBrand className="block lg:hidden flex flex-row gap-1 justify-center pr-20">
-            <Logo width='w-9' height='w-9' />
+            <div className="size-10">
+              <Logo logoSrc={logoSrc} setLogoSrc={setLogoSrc} />
+            </div>
+            
             <p className="font-bold text-inherit">GOLNAZ</p>
           </NavbarBrand>
         </NavbarContent>
@@ -162,9 +172,8 @@ export default function WebBody() {
         </NavbarMenu>
       </Navbar>
       {/* </div> */}
-      <div className="w-screen lg:min-w-[1200px] h-auto bg-blue-100 ">
-
-        <img src={Bg} alt='' />
+      <div className="w-screen lg:min-w-[1200px] h-auto flex justify-center">
+        <ForegroundImage foregroundImageSrc={foregroundImageSrc} setForegroundImageSrc={setForegroundImageSrc} />
       </div>
 
       <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
