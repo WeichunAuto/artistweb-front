@@ -48,7 +48,7 @@ export function ForegroundImage(props) {
 
   return (
     <>
-      <Image className="w-full h-full rounded-none" src={foregroundImageSrc} alt="logo" />
+      <Image className="w-screen h-full rounded-none" src={foregroundImageSrc} alt="logo" />
     </>
   );
 }

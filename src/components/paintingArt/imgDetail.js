@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Modal,
   ModalContent,
@@ -8,16 +8,15 @@ import {
   Divider,
   Spacer,
 } from "@nextui-org/react";
-import ImageGallery from "react-image-gallery";
+// import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../css/custom-gallery-thumb.css";
+import ImgPreviewInDetail from "./imgPreviewInDetail";
 
 export default function ImgDetail(props) {
   const { isOpen, onClose, paintWork, items } = props;
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const closeModal = () => {
-    setActiveIndex(0)
     onClose()
   }
 
@@ -46,37 +45,8 @@ export default function ImgDetail(props) {
               </ModalHeader>
               <ModalBody>
                 <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-20 px-2 lg:px-12">
-                  <div>
-                    <ImageGallery
-                      items={items}
-                      lazyLoad={true}
-                      showIndex={false}
-                      disableThumbnailScroll={false}
-                      showThumbnails={true}
-                      showPlayButton={false}
-                      showNav={false}
-                      showFullscreenButton={false}
-                      slideOnThumbnailOver={false}
-                      thumbnailPosition="top"
-                      onSlide={(index) => setActiveIndex(index)}
-                      renderThumbInner={(item) => {
-                        const index = items.indexOf(item); // Find the index of the current item
-                        return (
-                          <div
-                            className={`size-20 rounded-md p-2 flex flex-row justify-center border-2 ${
-                              index === activeIndex ? "border-pink-400" : "border-gray-100"
-                            }`}
-                          >
-                            <img
-                              src={item.thumbnail}
-                              alt={item.originalAlt}
-                              className="h-full rounded-md"
-                            />
-                          </div>
-                        );
-                      }}
-                    />
-                  </div>
+                  <ImgPreviewInDetail items={items}/>
+                  
                   <div className="flex flex-col pr-10 pt-8 lg:pt-0">
                     <p className="text-left text-2xl word-spacing-wide">
                       {paintWork.title}
