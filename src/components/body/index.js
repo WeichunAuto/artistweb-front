@@ -49,7 +49,7 @@ export default function WebBody() {
   }, [isMenuOpen])
 
   // Function to scroll to the Contact section
-  const scrollToComponent = (e) => {
+  const scrollToComponent = () => {
     if (isMenuOpen === true) {
       setShouldHideOnScroll(false) // If the side menu is open, then stick on scroll.
       setIsMenuOpen(!isMenuOpen) // close the menu after clicking.

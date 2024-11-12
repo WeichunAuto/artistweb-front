@@ -20,7 +20,7 @@ export class App extends Component {
           <WebBody />
       </NextUIProvider>
     )
-  }
+  } 
 }
 
 export default App;

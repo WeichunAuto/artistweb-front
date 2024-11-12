@@ -1,3 +1,4 @@
+// @ts-nocheck
 // tailwind.config.js
 const {nextui} = require("@nextui-org/react");
 
