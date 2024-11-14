@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import axiosInstance from "../../axios/request";
 import eventBus from "../../token/event";
 import { Image } from "@nextui-org/react";
 
-export function Logo(props: {
+const Logo = memo(function (props: {
   logoSrc: string;
   setLogoSrc: (logoSrc: string) => void;
 }) {
@@ -47,8 +47,8 @@ export function Logo(props: {
           if (statusCode === 200) {
             const imageURL: string = URL.createObjectURL(response.data);
             setLogoSrc(imageURL);
-          } else {
-            setLogoSrc("");
+          } else if (statusCode === 404) {
+            setLogoSrc('Not Found');
           }
         });
     }
@@ -58,11 +58,12 @@ export function Logo(props: {
     <>
         <Image
           className="w-full h-full rounded-none"
-          src={logoSrc === '' ? logoDefaultSrc : logoSrc}
+          src={logoSrc === 'Not Found' ? logoDefaultSrc : logoSrc}
           alt="logo"
         />
     </>
   );
-}
+})
+
 
 export default Logo;

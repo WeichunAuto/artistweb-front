@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import axiosInstance from "../../axios/request";
 import eventBus from "../../token/event";
 import { Image } from "@nextui-org/react";
 
-export function ForegroundImage(props: {foregroundImageSrc: string, setForegroundImageSrc: (imgSrc: string)=>void}) {
-  const { foregroundImageSrc, setForegroundImageSrc } = props
+const ForegroundImage = memo(function (props: {
+  foregroundImageSrc: string;
+  setForegroundImageSrc: (imgSrc: string) => void;
+}) {
+  const { foregroundImageSrc, setForegroundImageSrc } = props;
 
   const [jwtToken, setJwtToken] = useState("");
 
@@ -17,11 +20,11 @@ export function ForegroundImage(props: {foregroundImageSrc: string, setForegroun
     }
   });
 
-  useEffect(()=>{
-    if(jwtToken !== "" && foregroundImageSrc === "") {
+  useEffect(() => {
+    if (jwtToken !== "" && foregroundImageSrc === "") {
       loadForegroundImage(jwtToken);
     }
-  })
+  });
 
   const handleTokenEvent = (jwtToken: string) => {
     setJwtToken(jwtToken);
@@ -41,8 +44,8 @@ export function ForegroundImage(props: {foregroundImageSrc: string, setForegroun
           if (statusCode === 200) {
             const imageURL = URL.createObjectURL(response.data);
             setForegroundImageSrc(imageURL);
-          } else {
-            setForegroundImageSrc('');
+          } else if(statusCode === 404) {
+            setForegroundImageSrc('Not Found');
           }
         });
     }
@@ -50,10 +53,17 @@ export function ForegroundImage(props: {foregroundImageSrc: string, setForegroun
 
   return (
     <>
-    {foregroundImageSrc !== ''? <Image className="w-screen h-full rounded-none" src={foregroundImageSrc} alt="logo" /> : <></>}
-      
+      {foregroundImageSrc !== "Not Found" ? (
+        <Image
+          className="w-screen h-full rounded-none"
+          src={foregroundImageSrc}
+          alt="logo"
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
-}
+});
 
 export default ForegroundImage;

@@ -42,7 +42,7 @@ function Contact() {
         (menuList as MenuItem[]).forEach((menu) => {
           if (menu.href === myHref) {
             dispatch(setSelectedMenuIndex(menu.id));
-            console.log('进入 contact 视图')
+            // console.log('进入 contact 视图')
           }
         });
       }

@@ -39,7 +39,7 @@ function PArt() {
         (menuList as MenuItem[]).forEach((menu) => {
           if (menu.href === myHref) {
             dispatch(setSelectedMenuIndex(menu.id));
-            console.log('进入 paint 视图')
+            // console.log('进入 paint 视图')
           }
         });
       }
