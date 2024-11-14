@@ -8,7 +8,7 @@ function ImgPreviewInDetail(props) {
     <div className="flex flex-col gap-1">
       <div className={`w-full h-24 flex flex-row gap-2 ${items.length <= 3 ? 'justify-center' : 'justify-start'} ${items.length >= 5 ? 'lg:justify-center' : ''} items-center overflow-auto`}>
         {items.map((item, index) => (
-          <div className={`size-20 min-w-20 flex justify-center items-center p-1 rounded-md border-1.5 ${activeIndex === index ? 'border-pink-400' : 'border-gray-200'} `}
+          <div key={index} className={`size-20 min-w-20 flex justify-center items-center p-1 rounded-md border-1.5 ${activeIndex === index ? 'border-pink-400' : 'border-gray-200'} `}
             onClick={()=>setActiveIndex(index)}
           >
             <Image src={item.original} radius="none" className="max-h-[70px]"/>

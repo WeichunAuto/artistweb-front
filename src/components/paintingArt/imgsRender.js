@@ -89,9 +89,9 @@ function ImgsRender(props) {
   }
 
   let returnElements = null;
-
   switch (size) {
     case "lg": {
+      
       returnElements = (
         <div className="w-[98%] mx-auto grid grid-cols-3 gap-x-6">
           {data.map((paintWorks_col, index_col) => {

@@ -2,15 +2,15 @@ import axiosInstance from '../axios/request'
 import { App } from '../config'
 
 let jwtToken = {
-  getToken: async function() {
-    jwtToken = await requestToken(); // Wait for the token to be retrieved asynchronously
+  getToken: async function(): Promise<string>{
+    const jwtToken: string = await requestToken(); // Wait for the token to be retrieved asynchronously
     // console.log('New jwtToken:', jwtToken);
     return jwtToken
   }
 } 
 
 // Asynchronous request
-async function requestToken() {
+async function requestToken(): Promise<string>{
     
     try {
       const jwtRes = await axiosInstance.post('/login', {
@@ -22,7 +22,7 @@ async function requestToken() {
       return jwtObject.token
     } catch (error) {
       console.log('login token request error.....')
-      return null
+      return ''
     }
   }
 

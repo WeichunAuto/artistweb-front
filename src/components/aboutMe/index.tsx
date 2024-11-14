@@ -1,12 +1,39 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Image } from "@nextui-org/react";
 import axiosInstance from "../../axios/request";
 import eventBus from "../../token/event";
 import SocialMedia from "./socialMedia";
+import {useIntersection} from '../utils'
+import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
+import { RootState, AppDispatch } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { MenuItem } from "../../type/customTypes";
 
 function AboutMe() {
-  const [aboutMe, setAboutMe] = useState(null);
-  const [topics, setTopics] = useState(null);
+
+  const myHref: string = 'target-about'
+
+  const { menuList } = useSelector((state: RootState) => state.menus);
+  const dispatch: AppDispatch = useDispatch();
+
+  const aboutMeRef = useIntersection(
+    {
+      rootMargin: "-300px",
+    },
+    (inView) => {
+      if (inView) {
+        (menuList as MenuItem[]).forEach((menu) => {
+          if (menu.href === myHref) {
+            dispatch(setSelectedMenuIndex(menu.id));
+            console.log('进入 about me 视图')
+          }
+        });
+      }
+    }
+  );
+
+  const [aboutMe, setAboutMe] = useState<AboutMe|null>(null);
+  const [topics, setTopics] = useState<Topic[]|null>(null);
 
   useEffect(() => {
     eventBus.addListener("synToken", handleTokenEvent);
@@ -16,12 +43,26 @@ function AboutMe() {
     };
   });
 
-  const handleTokenEvent = (jwtToken) => {
+  const handleTokenEvent = (jwtToken: string) => {
     loadAboutMeData(jwtToken);
     loadTopicsData(jwtToken);
   };
 
-  const loadTopicsData = (jwtToken) => {
+  interface Topic{
+    id: Number,
+    title: string,
+    description: string,
+    imageURL?: string
+  }
+
+  interface AboutMe {
+    id: Number,
+    name: string,
+    description: string,
+    imageURL?: string
+  }
+
+  const loadTopicsData = (jwtToken: string) => {
     axiosInstance
       .get("/fetchTopics", {
         headers: {
@@ -36,10 +77,10 @@ function AboutMe() {
       });
   };
 
-  const loadTopicsImage = (jwtToken, tempTopicsData) => {
+  const loadTopicsImage = (jwtToken: string, tempTopicsData: Topic[]) => {
     if (tempTopicsData.length > 0) {
       (async () => {
-        const updatedMainData = await Promise.all(
+        const updatedMainData: Topic[] = await Promise.all(
           tempTopicsData.map(async (aTopic) => {
             try {
               const response = await axiosInstance.get(
@@ -68,7 +109,7 @@ function AboutMe() {
     }
   };
 
-  const loadAboutMeData = async (jwtToken) => {
+  const loadAboutMeData = async (jwtToken: string) => {
     const response = await axiosInstance.get("/fetchAboutMe", {
       headers: {
         Authorization: "Bearer " + jwtToken,
@@ -82,7 +123,7 @@ function AboutMe() {
     }
   };
 
-  const getProfilePhoto = async (id, jwtToken) => {
+  const getProfilePhoto = async (id: number, jwtToken: string) => {
     let imageURL = "";
     const response = await axiosInstance.get(`/getProfilePhoto/${id}/image`, {
       responseType: "blob",
@@ -98,7 +139,7 @@ function AboutMe() {
   };
 
   return (
-    <div className="w-full pt-16 h-auto">
+    <div ref={aboutMeRef} className="w-full pt-16 h-auto">
       <p className="font-georgian text-5xl lg:text-7xl text-center mb-8">
         about me.
       </p>

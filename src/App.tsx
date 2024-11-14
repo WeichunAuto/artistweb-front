@@ -10,7 +10,7 @@ import eventBus from './token/event'
 export class App extends Component {
 
   async componentDidMount() {
-    const jwtToken = await JwtToken.getToken()
+    const jwtToken: string = await JwtToken.getToken()
     eventBus.emit('synToken', jwtToken) // send an event to share the token.
   }
 

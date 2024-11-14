@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axiosInstance from "../../axios/request";
 import eventBus from "../../token/event";
 import { Image } from "@nextui-org/react";
 
-export function Logo(props) {
-  const { logoSrc, setLogoSrc } = props
+export function Logo(props: {
+  logoSrc: string;
+  setLogoSrc: (logoSrc: string) => void;
+}) {
+
+  const logoDefaultSrc = require('../../imgs/logo_default.webp') // default logo
+
+  const { logoSrc, setLogoSrc } = props;
 
   const [jwtToken, setJwtToken] = useState("");
 
@@ -17,17 +23,17 @@ export function Logo(props) {
     }
   });
 
-  useEffect(()=>{
-    if(jwtToken !== "" && logoSrc === "") {
+  useEffect(() => {
+    if (jwtToken !== "" && logoSrc === "") {
       loadLogo(jwtToken);
     }
-  })
+  });
 
-  const handleTokenEvent = (jwtToken) => {
+  const handleTokenEvent = (jwtToken: string) => {
     setJwtToken(jwtToken);
   };
 
-  const loadLogo = (jwtToken) => {
+  const loadLogo = (jwtToken: string) => {
     if (logoSrc === "") {
       axiosInstance
         .get("/fetchSavedLogo/image", {
@@ -39,8 +45,10 @@ export function Logo(props) {
         .then((response) => {
           const statusCode = response.status;
           if (statusCode === 200) {
-            const imageURL = URL.createObjectURL(response.data);
+            const imageURL: string = URL.createObjectURL(response.data);
             setLogoSrc(imageURL);
+          } else {
+            setLogoSrc("");
           }
         });
     }
@@ -48,7 +56,11 @@ export function Logo(props) {
 
   return (
     <>
-      <Image className="w-full h-full rounded-none" src={logoSrc} alt="logo" />
+        <Image
+          className="w-full h-full rounded-none"
+          src={logoSrc === '' ? logoDefaultSrc : logoSrc}
+          alt="logo"
+        />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import  { useState, useEffect } from 'react'
 import { Button, Input, Textarea, Checkbox, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { HeartIcon, MailIcon, PhoneIcon } from '../body/icons'
 import SocialMedia from '../aboutMe/socialMedia'
@@ -6,65 +6,112 @@ import { capitalize } from '../utils'
 import axiosInstance from '../../axios/request'
 import eventBus from '../../token/event'
 
-export class Contact extends Component {
+import {useIntersection} from '../utils'
+import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
+import { RootState, AppDispatch } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { MenuItem } from "../../type/customTypes";
 
-  state = {
+interface FieldForm {
+  firstName: string,
+    lastName: string,
+    email: string,
+    phoneNumber?: string,
+    message: string,
+    subscribe: boolean,
+    isFirstNameInvalid: boolean,
+    isLastNameInvalid: boolean,
+    isEmailInvalid: boolean,
+    isPhoneNumberInvalid: boolean,
+    isMessageInvalid: boolean,
+}
+
+function Contact() {
+
+  const myHref: string = 'target-contact'
+
+  const { menuList } = useSelector((state: RootState) => state.menus);
+  const dispatch: AppDispatch = useDispatch();
+
+  const contactRef = useIntersection(
+    {
+      rootMargin: "-500px",
+    },
+    (inView) => {
+      if (inView) {
+        (menuList as MenuItem[]).forEach((menu) => {
+          if (menu.href === myHref) {
+            dispatch(setSelectedMenuIndex(menu.id));
+            console.log('进入 contact 视图')
+          }
+        });
+      }
+    }
+  );
+
+
+  const [fieldsState, setFieldsState] = useState<FieldForm>({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
     message: '',
     subscribe: false,
-
     isFirstNameInvalid: false,
     isLastNameInvalid: false,
     isEmailInvalid: false,
     isPhoneNumberInvalid: false,
     isMessageInvalid: false,
+  })
+  
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [jwtToken, setJwtToken] = useState('')
 
-    isOpen: false,
-    jwtToken: '',
+  
 
-    isLoading: false
+  useEffect(() => {
+    eventBus.addListener("synToken", handleTokenEvent);
+
+    return () => {
+      eventBus.removeListener("synToken", handleTokenEvent);
+    };
+  });
+
+  const handleTokenEvent = (jwtToken: string) => {
+    setJwtToken(jwtToken)
   }
 
-  componentDidMount() {
-    eventBus.addListener('synToken', this.handleTokenEvent)
-  }
-  componentWillUnmount() {
-    eventBus.removeListener('synToken', this.handleTokenEvent)
-  }
-  handleTokenEvent = (jwtToken) => {
-    this.setState({ jwtToken: jwtToken })
-  }
 
-
-  handleInput = (e) => {
-    const { name, value } = e.target
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target as { name: string; value: string }
+    const tempFieldsState: FieldForm = {...fieldsState}
     if (name === 'subscribe') {
-      this.setState({ [name]: e.target.checked })
+      tempFieldsState[name] = (e.target as HTMLInputElement).checked
     } else {
-      this.setState({ [name]: value })
-      this.setState({ ['is' + capitalize(name) + 'Invalid']: false })
+      (tempFieldsState[name as keyof Omit<FieldForm, 'subscribe'>] as string) = value;
+      (tempFieldsState['is' + capitalize(name) + 'Invalid'  as keyof FieldForm] as boolean)  = false
     }
+    setFieldsState(tempFieldsState)
   }
 
   /**
    * Submit the contact form.
    * @returns 
    */
-  handleSubmit = () => {
-    if (!this.validateFields()) return false
-    this.setState({isLoading: true})
+  const handleSubmit = () => {
+    if (!validateFields()) return false
+    setIsLoading(true)
 
     const contactData = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      phoneNumber: this.state.phoneNumber,
-      message: this.state.message,
-      subscribe: this.state.subscribe,
+      firstName: fieldsState.firstName,
+      lastName: fieldsState.lastName,
+      email: fieldsState.email,
+      phoneNumber: fieldsState.phoneNumber,
+      message: fieldsState.message,
+      subscribe: fieldsState.subscribe,
     }
+    console.log(contactData)
     const formData = new FormData();
     formData.append(
       "contactMe",
@@ -74,14 +121,14 @@ export class Contact extends Component {
     // console.log(contactData)
     axiosInstance.post("/sendMessage", formData, {
       headers: {
-        'Authorization': 'Bearer ' + this.state.jwtToken
+        'Authorization': 'Bearer ' + jwtToken
       }
     })
     .then((response) => {
       const statusCode = response.status
       if(statusCode === 201) {
-        this.updatePops()
-        this.setState({isLoading: false})
+        updatePops()
+        setIsLoading(false)
       } else if(statusCode === 401) {
         console.log('invalid token.....')
         window.location.reload()
@@ -93,39 +140,49 @@ export class Contact extends Component {
    * validate form fields.
    * @returns 
    */
-  validateFields = () => {
-    const { firstName, lastName, email, phoneNumber, message } = this.state
+  const validateFields = () => {
+    // console.log(fieldsState)
+    const { firstName, lastName, email, phoneNumber, message } = fieldsState
+    const tempFieldsState = {...fieldsState}
     if (firstName.trim() === '') {
-      this.setState({ isFirstNameInvalid: true })
+      tempFieldsState.isFirstNameInvalid = true
+      setFieldsState(tempFieldsState)
       return false
     }
     if (lastName.trim() === '') {
-      this.setState({ isLastNameInvalid: true })
+      tempFieldsState.isLastNameInvalid = true
+      setFieldsState(tempFieldsState)
       return false
     }
 
-    const validateEmail = (value) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-    const emailInvalid = (value) => {
+    const validateEmail = (value: string) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    const emailInvalid = (value: string) => {
       if (value.trim() === '') return true
       return validateEmail(value) ? false : true
     }
     if (emailInvalid(email)) {
-      this.setState({ isEmailInvalid: true })
+      tempFieldsState.isEmailInvalid = true
+      setFieldsState(tempFieldsState)
       return false
     }
 
-    const validatePhone = (value) => value.match(/^\+|0\d+$/)
-    const phoneInvalid = (value) => {
+    const validatePhone = (value: string) => value.match(/^\+|0\d+$/)
+    const phoneInvalid = (value: string) => {
       if (value.trim() === '') return false
       return validatePhone(value) ? false : true
     }
-    if (phoneInvalid(phoneNumber)) {
-      this.setState({ isPhoneNumberInvalid: true })
-      return false
+    if(phoneNumber) {
+      if (phoneInvalid(phoneNumber)) {
+        tempFieldsState.isPhoneNumberInvalid = true
+        setFieldsState(tempFieldsState)
+        return false
+      }
     }
 
+
     if (message.trim() === '') {
-      this.setState({ isMessageInvalid: true })
+      tempFieldsState.isMessageInvalid = true
+      setFieldsState(tempFieldsState)
       return false
     }
 
@@ -135,59 +192,56 @@ export class Contact extends Component {
   /**
    * open Pop tips and close it after 2 seconds.
    */
-  updatePops = () => {
-    this.setState({ isOpen: true })
+  const updatePops = () => {
+    setIsOpen(true)
     setTimeout(() => {
-      this.setState({ isOpen: false })
+      setIsOpen(false)
     }, 2000)
   }
-
-  render() {
-    const { firstName, lastName, email, phoneNumber, message, subscribe, isFirstNameInvalid, isLastNameInvalid, isEmailInvalid, isPhoneNumberInvalid, isMessageInvalid, isOpen, isLoading } = this.state
     return (
-      <div className='w-full pt-16 h-auto'>
+      <div  className='w-full pt-16 h-auto'>
         <p className='font-georgian text-5xl lg:text-7xl text-center mb-8'>get in touch.</p>
         <p className='w-5/6 font-sans pb-16 text-center text-base word-spacing-wider tracking-widest mx-auto'>download & print. bring street art into your home.</p>
 
         <div className='w-full h-auto relative pt-2 pb-6 bg-pink-400'>
           <div className='pb-10 w-11/12 lg:w-4/5 xl:w-2/3 2xl:xl:w-2/3 h-auto mx-auto bg-white rounded-lg drop-shadow-lg'>
             <div className='px-6 lg:px-28 pt-8 lg:pt-12'>
-              <div className='flex flex-col lg:flex-row gap-6 lg:gap-8'>
+              <div ref={contactRef} className='flex flex-col lg:flex-row gap-6 lg:gap-8'>
                 <Input type='text' label='First Name' placeholder="Enter your first name" className='border-none'
                   isRequired
                   name='firstName'
-                  value={firstName}
-                  isInvalid={isFirstNameInvalid}
+                  value={fieldsState.firstName}
+                  isInvalid={fieldsState.isFirstNameInvalid}
                   errorMessage='Please provide your first name.'
-                  onChange={this.handleInput}
+                  onChange={handleInput}
                 />
                 <Input type='text' label='Last Name' placeholder="Enter your last name"
                   isRequired
                   name='lastName'
-                  value={lastName}
-                  isInvalid={isLastNameInvalid}
+                  value={fieldsState.lastName}
+                  isInvalid={fieldsState.isLastNameInvalid}
                   errorMessage='Please provide your last name.'
-                  onChange={this.handleInput}
+                  onChange={handleInput}
                 />
               </div>
               <div className='flex flex-col lg:flex-row gap-6 lg:gap-8 mt-8'>
                 <Input type='email' label='Email' placeholder="Enter your email" className='border-none'
                   isRequired
                   name='email'
-                  value={email}
-                  isInvalid={isEmailInvalid}
+                  value={fieldsState.email}
+                  isInvalid={fieldsState.isEmailInvalid}
                   errorMessage='Please provide your email address.'
-                  onChange={this.handleInput}
+                  onChange={handleInput}
                   startContent={
                     <MailIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
                   }
                 />
                 <Input type='text' label='Phone Number (Optional)' placeholder="Enter your phone number"
                   name='phoneNumber'
-                  value={phoneNumber}
-                  isInvalid={isPhoneNumberInvalid}
+                  value={fieldsState.phoneNumber}
+                  isInvalid={fieldsState.isPhoneNumberInvalid}
                   errorMessage='Please provide a correct phone number format.'
-                  onChange={this.handleInput}
+                  onChange={handleInput}
                   startContent={
                     <PhoneIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
                   }
@@ -197,18 +251,18 @@ export class Contact extends Component {
               <div className='mt-8'>
                 <Textarea label='Message' placeholder='What do you have in your mind?'
                   name='message'
-                  isInvalid={isMessageInvalid}
+                  isInvalid={fieldsState.isMessageInvalid}
                   errorMessage='Please write what you want to say.'
-                  value={message}
-                  onChange={this.handleInput}
+                  value={fieldsState.message}
+                  onChange={handleInput}
                 />
               </div>
               <div className='mt-2'>
-                <Checkbox size='sm' defaultSelected={subscribe}
+                <Checkbox size='sm' defaultSelected={fieldsState.subscribe}
                   name='subscribe'
-                  value={subscribe}
-                  isSelected={subscribe}
-                  onChange={this.handleInput}
+                  value={fieldsState.subscribe+''}
+                  isSelected={fieldsState.subscribe}
+                  onChange={handleInput}
                 >
                   Subscribe me to receive my latestwork.
                 </Checkbox>
@@ -221,7 +275,7 @@ export class Contact extends Component {
                       startContent={<HeartIcon width='20px' height='20px' />}
                       isLoading={isLoading}
                       className='bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg'
-                      onClick={this.handleSubmit}
+                      onClick={handleSubmit}
                     >
                       SEND
                     </Button>
@@ -243,7 +297,7 @@ export class Contact extends Component {
         </div>
       </div>
     )
-  }
+  
 }
 
 export default Contact

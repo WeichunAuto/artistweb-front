@@ -5,7 +5,7 @@ const {nextui} = require("@nextui-org/react");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.{html,js}",
+    "./src/**/*.{html,js,ts,tsx,jsx}", // do not add empty space between file types
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
@@ -14,7 +14,7 @@ module.exports = {
         'red-custom': '#ff0000', // Replace this with your desired shade of red
       },
       borderWidth: {
-        '3': '3px', // Optional: if you want a specific width
+        '3': '3px', // Optional: if you want a specific width 
       },
       fontFamily: {
         georgian: ['Georgian'],
