@@ -1,69 +1,55 @@
-import { useState, useEffect, memo } from "react";
+import { useEffect, memo } from "react";
 import axiosInstance from "../../axios/request";
-import eventBus from "../../token/event";
+
 import { Image } from "@nextui-org/react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const Logo = memo(function (props: {
   logoSrc: string;
   setLogoSrc: (logoSrc: string) => void;
 }) {
+  // console.log('logo 组件渲染了。。')
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
 
-  const logoDefaultSrc = require('../../imgs/logo_default.webp') // default logo
+  const logoDefaultSrc = require("../../imgs/logo_default.webp"); // default logo
 
   const { logoSrc, setLogoSrc } = props;
 
-  const [jwtToken, setJwtToken] = useState("");
-
   useEffect(() => {
-    if (jwtToken === "") {
-      eventBus.addListener("synToken", handleTokenEvent);
-      return () => {
-        eventBus.removeListener("synToken", handleTokenEvent);
-      };
-    }
-  });
+    const loadLogo = (jwtToken: string) => {
+      if (logoSrc === "") {
+        axiosInstance
+          .get("/fetchSavedLogo/image", {
+            responseType: "blob",
+            headers: {
+              Authorization: "Bearer " + jwtToken,
+            },
+          })
+          .then((response) => {
+            const statusCode = response.status;
+            if (statusCode === 200) {
+              const imageURL: string = URL.createObjectURL(response.data);
+              setLogoSrc(imageURL);
+            } 
+          });
+      }
+    };
 
-  useEffect(() => {
     if (jwtToken !== "" && logoSrc === "") {
       loadLogo(jwtToken);
     }
-  });
-
-  const handleTokenEvent = (jwtToken: string) => {
-    setJwtToken(jwtToken);
-  };
-
-  const loadLogo = (jwtToken: string) => {
-    if (logoSrc === "") {
-      axiosInstance
-        .get("/fetchSavedLogo/image", {
-          responseType: "blob",
-          headers: {
-            Authorization: "Bearer " + jwtToken,
-          },
-        })
-        .then((response) => {
-          const statusCode = response.status;
-          if (statusCode === 200) {
-            const imageURL: string = URL.createObjectURL(response.data);
-            setLogoSrc(imageURL);
-          } else if (statusCode === 404) {
-            setLogoSrc('Not Found');
-          }
-        });
-    }
-  };
+  }, [jwtToken, logoSrc, setLogoSrc]);
 
   return (
     <>
-        <Image
-          className="w-full h-full rounded-none"
-          src={logoSrc === 'Not Found' ? logoDefaultSrc : logoSrc}
-          alt="logo"
-        />
+      <Image
+        className="w-full h-full rounded-none"
+        src={logoSrc === "" ? logoDefaultSrc : logoSrc}
+        alt="logo"
+      />
     </>
   );
-})
-
+});
 
 export default Logo;

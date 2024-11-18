@@ -1,14 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../axios/request";
 import { AppDispatch } from "..";
+import { MenuItem } from "../../type/customTypes";
 
+interface menuStateInterface {
+    selectedMenuIndex: number,
+    menuList: MenuItem[]
+}
+
+const initialState: menuStateInterface = {
+    selectedMenuIndex: 0,
+    menuList: [] 
+}
 
 const menuSlice = createSlice({
     name: 'menus',
-    initialState: {
-        selectedMenuIndex: 0,
-        menuList: [] 
-    },
+    initialState,
     reducers: {
         setMenuList(state, action) {
             state.menuList = action.payload

@@ -8,12 +8,22 @@
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Web site created using create-react-app" />
   <style>
-
     #target-paint,
     #target-about,
     #target-contact {
       scroll-margin-top: 62px;
-      /* Adjust based on the navbar height */
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+      display: none;
+      /* For Chrome, Safari, and Edge */
+    }
+
+    .scrollbar-hidden {
+      -ms-overflow-style: none;
+      /* For Internet Explorer and Edge */
+      scrollbar-width: none;
+      /* For Firefox */
     }
   </style>
   <title>G4Art</title>

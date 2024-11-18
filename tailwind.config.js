@@ -43,7 +43,8 @@ module.exports = {
           'word-spacing': '0.5rem',
         },
       });
-    }],
+    }
+  ],
 }
 
  

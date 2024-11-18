@@ -1,10 +1,9 @@
-import  { useState, useEffect } from 'react'
+import  { useState } from 'react'
 import { Button, Input, Textarea, Checkbox, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { HeartIcon, MailIcon, PhoneIcon } from '../body/icons'
 import SocialMedia from '../aboutMe/socialMedia'
 import { capitalize } from '../utils'
 import axiosInstance from '../../axios/request'
-import eventBus from '../../token/event'
 
 import {useIntersection} from '../utils'
 import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
@@ -31,6 +30,7 @@ function Contact() {
   const myHref: string = 'target-contact'
 
   const { menuList } = useSelector((state: RootState) => state.menus);
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
   const dispatch: AppDispatch = useDispatch();
 
   const contactRef = useIntersection(
@@ -42,7 +42,6 @@ function Contact() {
         (menuList as MenuItem[]).forEach((menu) => {
           if (menu.href === myHref) {
             dispatch(setSelectedMenuIndex(menu.id));
-            // console.log('进入 contact 视图')
           }
         });
       }
@@ -66,21 +65,6 @@ function Contact() {
   
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [jwtToken, setJwtToken] = useState('')
-
-  
-
-  useEffect(() => {
-    eventBus.addListener("synToken", handleTokenEvent);
-
-    return () => {
-      eventBus.removeListener("synToken", handleTokenEvent);
-    };
-  });
-
-  const handleTokenEvent = (jwtToken: string) => {
-    setJwtToken(jwtToken)
-  }
 
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -178,7 +162,6 @@ function Contact() {
         return false
       }
     }
-
 
     if (message.trim() === '') {
       tempFieldsState.isMessageInvalid = true

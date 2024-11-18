@@ -1,26 +1,26 @@
-import React, { Component } from 'react'
+import { useEffect } from 'react'
 import './css/output.css'
 import WebBody from './components/body'
 
 import {NextUIProvider} from "@nextui-org/react"; 
 
-import JwtToken from './token/token'
-import eventBus from './token/event'
+import { useDispatch } from 'react-redux';
+import { fetchJwtToken } from './store/modules/jwtTokenSlice';
+import { AppDispatch } from './store';
 
-export class App extends Component {
+export function App()  {
+  const dispatch: AppDispatch = useDispatch();
+  
+  useEffect(()=> {
+    dispatch(fetchJwtToken())
+  },[dispatch])
 
-  async componentDidMount() {
-    const jwtToken: string = await JwtToken.getToken()
-    eventBus.emit('synToken', jwtToken) // send an event to share the token.
-  }
-
-  render() {
     return (
       <NextUIProvider>
           <WebBody />
       </NextUIProvider>
     )
   } 
-}
+
 
 export default App;

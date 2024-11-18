@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -11,21 +11,63 @@ import {
 // import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../css/custom-gallery-thumb.css";
-import ImgPreviewInDetail from "./imgPreviewInDetail";
+import DecorationsPreview from "./decorationsPreview";
+import DecorationsPreviewSckleton from "./decorationsPreviewSckleton";
+import { PaintWork } from "../../type/customTypes";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store";
+import {
+  setCurrentDecoration,
+  fetchCurrentDecoration,
+} from "../../store/modules/cacheDecorationsSlice";
 
-export default function ImgDetail(props) {
-  const { isOpen, onClose, paintWork, items } = props;
+interface IProps {
+  isPaintWorkDetailOpen: boolean;
+  onPaintWorkDetailClose: () => void;
+  paintWork: PaintWork | undefined;
+}
+
+export default function PaintWorkDetail(props: IProps) {
+  const {
+    isPaintWorkDetailOpen,
+    onPaintWorkDetailClose,
+    paintWork,
+  } = props;
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentDecoration, cachedDecorations } = useSelector(
+    (state: RootState) => state.cachedDecorations
+  );
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
+  const [isShowLoading, setIsShowLoading] = useState(false);
+
+  useEffect(() => {
+    if (paintWork) {
+      const cachedDecoration = cachedDecorations[paintWork.id];
+      if (cachedDecoration) {
+        dispatch(setCurrentDecoration(cachedDecoration));
+        setIsShowLoading(false)
+      } else {
+        setIsShowLoading(true)
+        dispatch(fetchCurrentDecoration(paintWork.id, jwtToken));
+      }
+    }
+  }, [paintWork, dispatch, jwtToken]);
+
+  useEffect(() => {
+    setIsShowLoading(false)
+  }, [currentDecoration])
 
   const closeModal = () => {
-    onClose()
-  }
+    onPaintWorkDetailClose();
+  };
 
   return (
     <>
       <Modal
         size="full"
         scrollBehavior="inside"
-        isOpen={isOpen}
+        isOpen={isPaintWorkDetailOpen}
         onClose={closeModal}
         placement="bottom"
       >
@@ -45,15 +87,18 @@ export default function ImgDetail(props) {
               </ModalHeader>
               <ModalBody>
                 <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-20 px-2 lg:px-12">
-                  <ImgPreviewInDetail items={items}/>
+                {isShowLoading ? <DecorationsPreviewSckleton /> : <DecorationsPreview decorations={currentDecoration} />}
                   
+
                   <div className="flex flex-col pr-10 pt-8 lg:pt-0">
                     <p className="text-left text-2xl word-spacing-wide">
-                      {paintWork.title}
+                      {paintWork ? paintWork.title : ""}
                     </p>
                     <Divider orientation="horizontal" className="mt-6 mb-8" />
                     <p className=" mb-2 text-large text-right">
-                      <span className="">${paintWork.price}</span>
+                      <span className="">
+                        ${paintWork ? paintWork.price : ""}
+                      </span>
                     </p>
                     <div className="flex">
                       <p className="">Availability: </p>
@@ -62,14 +107,15 @@ export default function ImgDetail(props) {
                     </div>
 
                     <Divider orientation="horizontal" className="mt-6 mb-8" />
-                    <p>{paintWork.description}</p>
+                    <p>{paintWork ? paintWork.description : ""}</p>
                     <Divider orientation="horizontal" className="mt-6 mb-8" />
                     <div className="flex">
                       <p className="">Dimension: </p>
                       <Spacer x={4} />
                       <p className="text-gray-400 text-sm content-end">
                         {" "}
-                        {paintWork.dimensionWidth} X {paintWork.dimensionHeight}
+                        {paintWork ? paintWork.dimensionWidth : ""} X{" "}
+                        {paintWork ? paintWork.dimensionHeight : ""}
                         mm
                       </p>
                     </div>
@@ -78,7 +124,7 @@ export default function ImgDetail(props) {
                       <Spacer x={4} />
                       <p className="text-gray-400 text-sm content-end">
                         {" "}
-                        {paintWork.year}
+                        {paintWork ? paintWork.year : ""}
                       </p>
                     </div>
                   </div>

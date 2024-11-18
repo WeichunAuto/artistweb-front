@@ -15,7 +15,7 @@ export const Color = {
 // Restful API related while using axios.
  export const ApiCon = {
         BASE_RUL: process.env.NODE_ENV === 'development' ? devBaseUrl : productBaseUrl,
-        TIMEOUT: 5000
+        TIMEOUT: 15000
     }
 
 // Authorized app account.

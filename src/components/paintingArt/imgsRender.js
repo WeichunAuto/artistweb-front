@@ -6,7 +6,7 @@ import axiosInstance from "../../axios/request";
 import Gallery from "./gallery";
 
 function ImgsRender(props) {
-  const { size, data } = props;
+  const { size, paintWorks } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [paintWork, setPaintWork] = useState(null);
 

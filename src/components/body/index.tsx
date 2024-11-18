@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMenuList, setSelectedMenuIndex } from "../../store/modules/menuSlice";
+import {
+  fetchMenuList,
+  setSelectedMenuIndex,
+} from "../../store/modules/menuSlice";
+import { setIsSmallScreen } from "../../store/modules/screenSizeSlice";
 import { AppDispatch, RootState } from "../../store/index";
-import { MenuItem } from "../../type/customTypes";
-import eventBus from "../../token/event.js";
+
 import {
   Navbar,
   NavbarBrand,
@@ -17,39 +20,56 @@ import {
 } from "@nextui-org/react";
 import Logo from "./logo";
 import ForegroundImage from "./foregroundImage";
-import PArt from "../paintingArt/index";
+import PaintWork from "../paintingArt/index";
 import Contact from "../contact/index";
 import AboutMe from "../aboutMe/index";
 import Footer from "../footer/index.js";
 import { SnailIcon } from "./icons.js";
 
 export default function WebBody() {
+  const dispatch: AppDispatch = useDispatch();
+  const { isSmallScreen } = useSelector((state: RootState) => state.screenSize);
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [shouldHideOnScroll, setShouldHideOnScroll] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const [logoSrc, setLogoSrc] = useState("");
   const [foregroundImageSrc, setForegroundImageSrc] = useState("");
 
   // capture current window size
   useEffect(() => {
+    const smallScreenSize: 640 = 640;
     const handleWindowSizeChange = () => {
       const currentWindowWidth = window.innerWidth;
-      if (currentWindowWidth > 640) {
-        // stick on top if it is not a small screen.
-        setShouldHideOnScroll(false);
-        setIsSmallScreen(false);
+      if (currentWindowWidth > smallScreenSize) {
+        dispatch(setIsSmallScreen(false));
       } else {
-        setShouldHideOnScroll(true);
-        setIsSmallScreen(true);
+        dispatch(setIsSmallScreen(true));
       }
     };
+
     window.addEventListener("resize", handleWindowSizeChange);
+    handleWindowSizeChange();
+
+    if (jwtToken !== "") {
+      dispatch(fetchMenuList(jwtToken));
+    }
+
     return () => {
       window.removeEventListener("resize", handleWindowSizeChange);
     };
-  }, [isMenuOpen]);
+  }, [dispatch, jwtToken]);
+
+  useEffect(() => {
+    if (isSmallScreen) {
+      setShouldHideOnScroll(true);
+    } else {
+      // stick on top if it is not a small screen.
+      setShouldHideOnScroll(false);
+    }
+  }, [isMenuOpen, isSmallScreen]);
 
   // Function to scroll to the Contact section
   const scrollToComponent = (menuId: number) => {
@@ -60,28 +80,15 @@ export default function WebBody() {
       setShouldHideOnScroll(true);
     }
 
-    dispatch(setSelectedMenuIndex(menuId))
+    dispatch(setSelectedMenuIndex(menuId));
   };
 
-  
+  const { selectedMenuIndex, menuList } = useSelector(
+    (state: RootState) => state.menus
+  );
 
-  const { selectedMenuIndex, menuList } = useSelector((state: RootState) => state.menus);
-  const dispatch: AppDispatch = useDispatch();
 
-  useEffect(() => {
-    eventBus.addListener("synToken", handleTokenEvent);
-
-    return () => {
-      eventBus.removeListener("synToken", handleTokenEvent);
-    };
-  });
-
-  const handleTokenEvent = (jwtToken: string) => {
-    dispatch(fetchMenuList(jwtToken));
-  };
-
-  // const [selectedMenuIndex, setSelectedMenuIndex] = useState<number>(0)
-  const menuChosenStyle = 'rounded-sm border-b-[3px] border-pink-400'
+  const menuChosenStyle = "rounded-sm border-b-[3px] border-pink-400";
 
   return (
     <>
@@ -122,7 +129,7 @@ export default function WebBody() {
 
         {/* menus for large screen */}
         <NavbarContent className="hidden lg:flex flex-row justify-items-center">
-          {(menuList as MenuItem[]).map((item, index) => {
+          {menuList.map((item, index) => {
             const navbarItem = (
               <NavbarItem
                 key={`${item}-${index}`}
@@ -131,9 +138,11 @@ export default function WebBody() {
                 <Link
                   color="foreground"
                   isDisabled={item.disable}
-                  className={`text-2xl font-georgian ${item.id === selectedMenuIndex ? menuChosenStyle : ''}`}
-                  href={'#'+item.href}
-                  onClick={()=>scrollToComponent(item.id)}
+                  className={`text-2xl font-georgian ${
+                    item.id === selectedMenuIndex ? menuChosenStyle : ""
+                  }`}
+                  href={"#" + item.href}
+                  onClick={() => scrollToComponent(item.id)}
                 >
                   {item.name}
                 </Link>
@@ -156,14 +165,14 @@ export default function WebBody() {
                 </Tooltip>
               );
             } else {
-              return navbarItem
+              return navbarItem;
             }
           })}
         </NavbarContent>
 
         {/* menus for mobile phone screen */}
         <NavbarMenu className="bg-white bg-opacity-90">
-          {(menuList as MenuItem[]).map((item, index) => (
+          {menuList.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color="foreground"
@@ -171,7 +180,7 @@ export default function WebBody() {
                 href={"#" + item.href}
                 size="lg"
                 isDisabled={item.disable}
-                onClick={()=>scrollToComponent(item.id)}
+                onClick={() => scrollToComponent(item.id)}
               >
                 {item.name}
               </Link>
@@ -188,7 +197,7 @@ export default function WebBody() {
       </div>
 
       <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
-        <PArt />
+        <PaintWork />
       </div>
 
       <div id="target-about" className="w-screen lg:min-w-[1200px] h-auto">

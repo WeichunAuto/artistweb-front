@@ -1,17 +1,117 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Image } from "@nextui-org/react";
 import axiosInstance from "../../axios/request";
-import eventBus from "../../token/event";
 import SocialMedia from "./socialMedia";
-import {useIntersection} from '../utils'
+import { useIntersection } from "../utils";
 import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
 import { RootState, AppDispatch } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuItem } from "../../type/customTypes";
 
-function AboutMe() {
+interface Topic {
+  id: Number;
+  title: string;
+  description: string;
+  imageURL?: string;
+}
 
-  const myHref: string = 'target-about'
+interface IAboutMe {
+  id: Number;
+  name: string;
+  description: string;
+  imageURL?: string;
+}
+
+const aboutMe = memo(function() {
+  // console.log("about me 渲染了。。。");
+  const myHref: string = "target-about";
+
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
+  const [aboutMe, setAboutMe] = useState<IAboutMe | null>(null);
+  const [topics, setTopics] = useState<Topic[] | null>(null);
+
+  useEffect(() => {
+    const loadAboutMeData = async (jwtToken: string) => {
+      const response = await axiosInstance.get("/fetchAboutMe", {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      });
+      const statusCode = response.status;
+      if (statusCode === 200) {
+        const aboutMeTempData = response.data;
+        const imageURL = await getProfilePhoto(aboutMeTempData.id, jwtToken);
+        setAboutMe({ ...aboutMeTempData, imageURL });
+      }
+    };
+
+    const loadTopicsData = (jwtToken: string) => {
+      axiosInstance
+        .get("/fetchTopics", {
+          headers: {
+            Authorization: "Bearer " + jwtToken,
+          },
+        })
+        .then((response) => {
+          const statusCode = response.status;
+          if (statusCode === 200) {
+            loadTopicsImage(jwtToken, response.data);
+          }
+        });
+    };
+
+    const loadTopicsImage = (jwtToken: string, tempTopicsData: Topic[]) => {
+      if (tempTopicsData.length > 0) {
+        (async () => {
+          const updatedMainData: Topic[] = await Promise.all(
+            tempTopicsData.map(async (aTopic) => {
+              try {
+                const response = await axiosInstance.get(
+                  `/getATopic/${aTopic.id}/image`,
+                  {
+                    responseType: "blob",
+                    headers: {
+                      Authorization: "Bearer " + jwtToken,
+                    },
+                  }
+                );
+                const imageURL = URL.createObjectURL(response.data);
+                return { ...aTopic, imageURL };
+              } catch (error) {
+                console.error(
+                  "Error fetching image for aPaintWork ID:",
+                  aTopic.id,
+                  error
+                );
+                return { ...aTopic, imageURL: "" };
+              }
+            })
+          );
+          setTopics(updatedMainData);
+        })();
+      }
+    };
+
+    const getProfilePhoto = async (id: number, jwtToken: string) => {
+      let imageURL = "";
+      const response = await axiosInstance.get(`/getProfilePhoto/${id}/image`, {
+        responseType: "blob",
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      });
+      const statusCode = response.status;
+      if (statusCode === 200) {
+        imageURL = URL.createObjectURL(response.data);
+      }
+      return imageURL;
+    };
+
+    if (jwtToken !== "") {
+      loadAboutMeData(jwtToken);
+      loadTopicsData(jwtToken);
+    }
+  }, [jwtToken]);
 
   const { menuList } = useSelector((state: RootState) => state.menus);
   const dispatch: AppDispatch = useDispatch();
@@ -31,112 +131,6 @@ function AboutMe() {
       }
     }
   );
-
-  const [aboutMe, setAboutMe] = useState<AboutMe|null>(null);
-  const [topics, setTopics] = useState<Topic[]|null>(null);
-
-  useEffect(() => {
-    eventBus.addListener("synToken", handleTokenEvent);
-
-    return () => {
-      eventBus.removeListener("synToken", handleTokenEvent);
-    };
-  });
-
-  const handleTokenEvent = (jwtToken: string) => {
-    loadAboutMeData(jwtToken);
-    loadTopicsData(jwtToken);
-  };
-
-  interface Topic{
-    id: Number,
-    title: string,
-    description: string,
-    imageURL?: string
-  }
-
-  interface AboutMe {
-    id: Number,
-    name: string,
-    description: string,
-    imageURL?: string
-  }
-
-  const loadTopicsData = (jwtToken: string) => {
-    axiosInstance
-      .get("/fetchTopics", {
-        headers: {
-          Authorization: "Bearer " + jwtToken,
-        },
-      })
-      .then((response) => {
-        const statusCode = response.status;
-        if (statusCode === 200) {
-          loadTopicsImage(jwtToken, response.data);
-        }
-      });
-  };
-
-  const loadTopicsImage = (jwtToken: string, tempTopicsData: Topic[]) => {
-    if (tempTopicsData.length > 0) {
-      (async () => {
-        const updatedMainData: Topic[] = await Promise.all(
-          tempTopicsData.map(async (aTopic) => {
-            try {
-              const response = await axiosInstance.get(
-                `/getATopic/${aTopic.id}/image`,
-                {
-                  responseType: "blob",
-                  headers: {
-                    Authorization: "Bearer " + jwtToken,
-                  },
-                }
-              );
-              const imageURL = URL.createObjectURL(response.data);
-              return { ...aTopic, imageURL };
-            } catch (error) {
-              console.error(
-                "Error fetching image for aPaintWork ID:",
-                aTopic.id,
-                error
-              );
-              return { ...aTopic, imageURL: "" };
-            }
-          })
-        );
-        setTopics(updatedMainData);
-      })();
-    }
-  };
-
-  const loadAboutMeData = async (jwtToken: string) => {
-    const response = await axiosInstance.get("/fetchAboutMe", {
-      headers: {
-        Authorization: "Bearer " + jwtToken,
-      },
-    });
-    const statusCode = response.status;
-    if (statusCode === 200) {
-      const aboutMeTempData = response.data;
-      const imageURL = await getProfilePhoto(aboutMeTempData.id, jwtToken);
-      setAboutMe({ ...aboutMeTempData, imageURL });
-    }
-  };
-
-  const getProfilePhoto = async (id: number, jwtToken: string) => {
-    let imageURL = "";
-    const response = await axiosInstance.get(`/getProfilePhoto/${id}/image`, {
-      responseType: "blob",
-      headers: {
-        Authorization: "Bearer " + jwtToken,
-      },
-    });
-    const statusCode = response.status;
-    if (statusCode === 200) {
-      imageURL = URL.createObjectURL(response.data);
-    }
-    return imageURL;
-  };
 
   return (
     <div ref={aboutMeRef} className="w-full pt-16 h-auto">
@@ -192,7 +186,7 @@ function AboutMe() {
                       isBlurred
                       alt={topic.title}
                       src={topic.imageURL}
-                      fallbackSrc="https://via.placeholder.com/300x200"
+                      // fallbackSrc="https://via.placeholder.com/300x200"
                       className="w-auto h-[300px] sm:h-[350px] lg:h-[550px]"
                     />
                   </div>
@@ -210,6 +204,6 @@ function AboutMe() {
       </div>
     </div>
   );
-}
+})
 
-export default AboutMe;
+export default aboutMe;
