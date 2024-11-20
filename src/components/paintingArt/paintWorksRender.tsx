@@ -1,6 +1,12 @@
-import { memo, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { memo, useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store";
+import {
+  fetchPaintWorks,
+  getMaxPageNum,
+} from "../../store/modules/paintWorkSlice";
+import { setIsPaintWorksSectionRended } from "../../store/modules/sectionRenderStatusSlice";
+
 import { PaintWork } from "../../type/customTypes";
 import DynamicImage from "./dynamicImage";
 import Gallery from "./gallery";
@@ -8,8 +14,16 @@ import PaintWorkDetail from "./paintWorkDetail";
 import { useDisclosure } from "@nextui-org/react";
 
 const paintWorksRender = memo(function () {
+  const dispatch: AppDispatch = useDispatch();
+  const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
   const { paintWorks } = useSelector((state: RootState) => state.paintWorks);
   const { isSmallScreen } = useSelector((state: RootState) => state.screenSize);
+    // console.log('isSmallScreen = ', isSmallScreen)
+  const pageSize = 6
+
+  const [pageNum, setPageNum] = useState(1);
+
+  const smallScreenRef = useRef<HTMLDivElement>(null);
 
   const [paintWorks_col_1, setPaintWorks_col_1] = useState<PaintWork[]>([]);
   const [paintWorks_col_2, setPaintWorks_col_2] = useState<PaintWork[]>([]);
@@ -26,12 +40,14 @@ const paintWorksRender = memo(function () {
   const [paintWorkForDetail, setPaintWorkForDetail] = useState<PaintWork>();
 
   useEffect(() => {
-    if (isSmallScreen) {
-      // small screen
-      setPaintWorks_col_1([]);
-      setPaintWorks_col_2([]);
-      setPaintWorks_col_3([]);
-    } else {
+    if (jwtToken !== "" && paintWorks.length === 0) {
+      dispatch(fetchPaintWorks(pageSize, pageNum, jwtToken));
+      dispatch(getMaxPageNum(pageSize, jwtToken));
+    }
+  }, [jwtToken, dispatch]);
+
+  useEffect(() => {
+    if (!isSmallScreen) {
       // not a small screen
       const temp_col_1: PaintWork[] = [];
       const temp_col_2: PaintWork[] = [];
@@ -58,11 +74,12 @@ const paintWorksRender = memo(function () {
       setPaintWorks_col_2(temp_col_2);
       setPaintWorks_col_3(temp_col_3);
     }
+    dispatch(setIsPaintWorksSectionRended(true))
   }, [isSmallScreen, paintWorks]);
 
   return isSmallScreen ? (
     <div className="w-[98%] mx-auto grid grid-cols-1 gap-y-6">
-      <div className="flex flex-col px-2">
+      <div ref={smallScreenRef} className="flex flex-col px-2">
         {paintWorks.map((paintWork, index) => (
           <DynamicImage
             paintWork={paintWork}
@@ -71,6 +88,10 @@ const paintWorksRender = memo(function () {
             setGalleryPaintWorkId={setGalleryPaintWorkId}
             setPaintWorkForDetail={setPaintWorkForDetail}
             onPaintWorkDetailOpen={onPaintWorkDetailOpen}
+            observed={index === paintWorks.length - 2 ? "Y" : "N"}
+            pageSize={pageSize}
+            pageNum={pageNum}
+            setPageNum={setPageNum}
           />
         ))}
       </div>
@@ -97,6 +118,10 @@ const paintWorksRender = memo(function () {
             setGalleryPaintWorkId={setGalleryPaintWorkId}
             setPaintWorkForDetail={setPaintWorkForDetail}
             onPaintWorkDetailOpen={onPaintWorkDetailOpen}
+            observed='N'
+            pageSize={pageSize}
+            pageNum={pageNum}
+            setPageNum={setPageNum}
           />
         ))}
       </div>
@@ -109,6 +134,10 @@ const paintWorksRender = memo(function () {
             setGalleryPaintWorkId={setGalleryPaintWorkId}
             setPaintWorkForDetail={setPaintWorkForDetail}
             onPaintWorkDetailOpen={onPaintWorkDetailOpen}
+            observed='N'
+            pageSize={pageSize}
+            pageNum={pageNum}
+            setPageNum={setPageNum}
           />
         ))}
       </div>
@@ -121,6 +150,10 @@ const paintWorksRender = memo(function () {
             setGalleryPaintWorkId={setGalleryPaintWorkId}
             setPaintWorkForDetail={setPaintWorkForDetail}
             onPaintWorkDetailOpen={onPaintWorkDetailOpen}
+            observed={((index === paintWorks_col_3.length-2) || (paintWorks_col_3.length-2) === -1) ? 'Y' : 'N'}
+            pageSize={pageSize}
+            pageNum={pageNum}
+            setPageNum={setPageNum}
           />
         ))}
       </div>

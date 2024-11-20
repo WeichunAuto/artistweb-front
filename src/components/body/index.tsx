@@ -28,6 +28,13 @@ import { SnailIcon } from "./icons.js";
 
 export default function WebBody() {
   const dispatch: AppDispatch = useDispatch();
+  const {
+    isForeGroundImageRended,
+    isPaintWorksSectionRended,
+    isAboutMeSectionRender,
+    isContactSectionRender,
+  } = useSelector((state: RootState) => state.sectionRenderStatus);
+
   const { isSmallScreen } = useSelector((state: RootState) => state.screenSize);
   const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
 
@@ -56,7 +63,6 @@ export default function WebBody() {
     if (jwtToken !== "") {
       dispatch(fetchMenuList(jwtToken));
     }
-
     return () => {
       window.removeEventListener("resize", handleWindowSizeChange);
     };
@@ -71,7 +77,6 @@ export default function WebBody() {
     }
   }, [isMenuOpen, isSmallScreen]);
 
-  // Function to scroll to the Contact section
   const scrollToComponent = (menuId: number) => {
     if (isMenuOpen === true) {
       setShouldHideOnScroll(false); // If the side menu is open, then stick on scroll.
@@ -79,14 +84,12 @@ export default function WebBody() {
     } else if (isSmallScreen === true) {
       setShouldHideOnScroll(true);
     }
-
     dispatch(setSelectedMenuIndex(menuId));
   };
 
   const { selectedMenuIndex, menuList } = useSelector(
     (state: RootState) => state.menus
   );
-
 
   const menuChosenStyle = "rounded-sm border-b-[3px] border-pink-400";
 
@@ -195,22 +198,34 @@ export default function WebBody() {
           setForegroundImageSrc={setForegroundImageSrc}
         />
       </div>
-
-      <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
-        <PaintWork />
-      </div>
-
-      <div id="target-about" className="w-screen lg:min-w-[1200px] h-auto">
-        <AboutMe />
-      </div>
-
-      <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
-        <Contact />
-      </div>
-
-      <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
-        <Footer />
-      </div>
+      {isForeGroundImageRended ? (
+        <div id="target-paint" className="w-screen lg:min-w-[1200px] h-auto">
+          <PaintWork />
+        </div>
+      ) : (
+        <></>
+      )}
+      {isPaintWorksSectionRended ? (
+        <div id="target-about" className="w-screen lg:min-w-[1200px] h-auto">
+          <AboutMe />
+        </div>
+      ) : (
+        <></>
+      )}
+      {isAboutMeSectionRender ? (
+        <div id="target-contact" className="w-screen lg:min-w-[1200px] h-auto">
+          <Contact />
+        </div>
+      ) : (
+        <></>
+      )}
+      {isContactSectionRender ? (
+        <div id="target-footer" className="w-screen lg:min-w-[1200px] h-auto">
+          <Footer />
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

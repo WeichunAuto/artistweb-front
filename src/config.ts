@@ -2,7 +2,7 @@ const devBaseUrl = 'http://192.168.18.41:8080/users/'
 // const devBaseUrl = 'http://localhost:8080/users/'
 // const devBaseUrl = 'http://3.24.110.157:8080/users/'
 
-const productBaseUrl = 'http://3.24.110.157:8080/users/'
+const productBaseUrl = 'http://54.206.56.57:8080/users/'
 
 // website related colors
 export const Color = {

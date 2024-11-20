@@ -18,7 +18,7 @@ export type PaintWork = {
   dimensionWidth: number;
   dimensionHeight: number;
   decorationCount: number;
-  imageURL?: string;
+  coverURL: string;
 }
 
 export type Decoration = {

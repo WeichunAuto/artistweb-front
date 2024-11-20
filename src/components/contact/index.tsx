@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import  { useState, useEffect } from 'react'
 import { Button, Input, Textarea, Checkbox, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { HeartIcon, MailIcon, PhoneIcon } from '../body/icons'
 import SocialMedia from '../aboutMe/socialMedia'
@@ -7,6 +7,7 @@ import axiosInstance from '../../axios/request'
 
 import {useIntersection} from '../utils'
 import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
+import { setIsContactSectionRender } from '../../store/modules/sectionRenderStatusSlice'
 import { RootState, AppDispatch } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuItem } from "../../type/customTypes";
@@ -26,7 +27,6 @@ interface FieldForm {
 }
 
 function Contact() {
-
   const myHref: string = 'target-contact'
 
   const { menuList } = useSelector((state: RootState) => state.menus);
@@ -47,7 +47,6 @@ function Contact() {
       }
     }
   );
-
 
   const [fieldsState, setFieldsState] = useState<FieldForm>({
     firstName: '',
@@ -168,9 +167,12 @@ function Contact() {
       setFieldsState(tempFieldsState)
       return false
     }
-
     return true
   }
+
+  useEffect(() => {
+    dispatch(setIsContactSectionRender(true))
+  }, [])
 
   /**
    * open Pop tips and close it after 2 seconds.

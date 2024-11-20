@@ -2,8 +2,10 @@ import { useEffect, memo } from "react";
 import axiosInstance from "../../axios/request";
 
 import { Image } from "@nextui-org/react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store";
+import { setIsForeGroundImageRended } from "../../store/modules/sectionRenderStatusSlice";
+
 
 const ForegroundImage = memo(function (props: {
   foregroundImageSrc: string;
@@ -11,6 +13,8 @@ const ForegroundImage = memo(function (props: {
 }) {
   const { foregroundImageSrc, setForegroundImageSrc } = props;
   const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
+  const dispatch: AppDispatch = useDispatch();
+  
 
   useEffect(() => {
     const loadForegroundImage = (jwtToken: string) => {
@@ -27,6 +31,7 @@ const ForegroundImage = memo(function (props: {
             if (statusCode === 200) {
               const imageURL = URL.createObjectURL(response.data);
               setForegroundImageSrc(imageURL);
+              dispatch(setIsForeGroundImageRended(true)) // let the next section know this section is rendered
             } 
           });
       }
@@ -35,14 +40,14 @@ const ForegroundImage = memo(function (props: {
     if (jwtToken !== "" && foregroundImageSrc === "") {
       loadForegroundImage(jwtToken);
     }
-  }, [jwtToken, foregroundImageSrc, setForegroundImageSrc]);
+  }, [jwtToken, foregroundImageSrc, setForegroundImageSrc, dispatch]);
 
 
   return (
     <>
       {foregroundImageSrc !== "" ? (
         <Image
-          className="w-screen h-full rounded-none"
+          className={`w-screen h-auto rounded-none`}
           src={foregroundImageSrc}
           alt="foregroundImage"
         />

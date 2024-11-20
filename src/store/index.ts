@@ -4,6 +4,7 @@ import paintWorkSlice from './modules/paintWorkSlice'
 import screenSizeSlice from './modules/screenSizeSlice'
 import jwtTokenSlice from './modules/jwtTokenSlice'
 import cacheDecorationsSlice from './modules/cacheDecorationsSlice'
+import sectionRenderStatusSlice from './modules/sectionRenderStatusSlice'
 
 const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
         paintWorks: paintWorkSlice,
         screenSize: screenSizeSlice,
         jwtToken: jwtTokenSlice,
-        cachedDecorations: cacheDecorationsSlice
+        cachedDecorations: cacheDecorationsSlice,
+        sectionRenderStatus: sectionRenderStatusSlice
     }
 })
 

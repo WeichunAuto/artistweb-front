@@ -15,7 +15,6 @@ const gallery = memo(function (props: {
   isShowGallery: boolean;
   setIsShowGallery: (isShowGallery: boolean) => void;
 }) {
-  
   const { galleryPaintWorkId, isShowGallery, setIsShowGallery } = props;
   const { currentDecoration, cachedDecorations } = useSelector(
     (state: RootState) => state.cachedDecorations
@@ -26,13 +25,14 @@ const gallery = memo(function (props: {
   const [isShowLoading, setIsShowLoading] = useState(false);
 
   useEffect(() => {
-    // console.log("currentDecoration = ", currentDecoration);
-    const cachedDecoration = cachedDecorations[galleryPaintWorkId];
-    if (cachedDecoration) {
-      dispatch(setCurrentDecoration(cachedDecoration));
-    } else {
-      setIsShowLoading(true);
-      dispatch(fetchCurrentDecoration(galleryPaintWorkId, jwtToken));
+    if (galleryPaintWorkId !== 0) {
+      const cachedDecoration = cachedDecorations[galleryPaintWorkId];
+      if (cachedDecoration) {
+        dispatch(setCurrentDecoration(cachedDecoration));
+      } else {
+        setIsShowLoading(true);
+        dispatch(fetchCurrentDecoration(galleryPaintWorkId, jwtToken));
+      }
     }
   }, [galleryPaintWorkId, dispatch, jwtToken]);
 

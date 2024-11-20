@@ -4,6 +4,7 @@ import axiosInstance from "../../axios/request";
 import SocialMedia from "./socialMedia";
 import { useIntersection } from "../utils";
 import { setSelectedMenuIndex } from "../../store/modules/menuSlice";
+import { setIsAboutMeSectionRender } from "../../store/modules/sectionRenderStatusSlice";
 import { RootState, AppDispatch } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuItem } from "../../type/customTypes";
@@ -28,7 +29,7 @@ const aboutMe = memo(function() {
 
   const { jwtToken } = useSelector((state: RootState) => state.jwtToken);
   const [aboutMe, setAboutMe] = useState<IAboutMe | null>(null);
-  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     const loadAboutMeData = async (jwtToken: string) => {
@@ -112,6 +113,13 @@ const aboutMe = memo(function() {
       loadTopicsData(jwtToken);
     }
   }, [jwtToken]);
+
+  useEffect(() => {
+    if(topics.length !== 0) {
+      dispatch(setIsAboutMeSectionRender(true))
+    }
+
+  }, [topics])
 
   const { menuList } = useSelector((state: RootState) => state.menus);
   const dispatch: AppDispatch = useDispatch();

@@ -17,7 +17,7 @@ function LoadingAnimation() {
         transition={bounceTransition}
         animate={{
           y: ["0%", "-100%"], // bounce up and down
-        }}
+        }} 
       />
       <motion.div
         className="w-3 h-3 m-2 bg-purple-500 rounded-full"
