@@ -43,7 +43,7 @@ const Logo = memo(function (props: {
 
   return (
     <>
-      <Image
+      <img
         className="w-full h-full rounded-none"
         src={logoSrc === "" ? logoDefaultSrc : logoSrc}
         alt="logo"
