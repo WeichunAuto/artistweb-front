@@ -94,7 +94,7 @@ function Contact() {
       message: fieldsState.message,
       subscribe: fieldsState.subscribe,
     }
-    console.log(contactData)
+    // console.log(contactData)
     const formData = new FormData();
     formData.append(
       "contactMe",

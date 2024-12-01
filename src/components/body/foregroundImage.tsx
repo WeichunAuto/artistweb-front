@@ -32,7 +32,9 @@ const ForegroundImage = memo(function (props: {
               const imageURL = URL.createObjectURL(response.data);
               setForegroundImageSrc(imageURL);
               dispatch(setIsForeGroundImageRended(true)) // let the next section know this section is rendered
-            } 
+            } else if(statusCode === 404) {
+              dispatch(setIsForeGroundImageRended(true)) // let the next section know this section is rendered
+            }
           });
       }
     };
