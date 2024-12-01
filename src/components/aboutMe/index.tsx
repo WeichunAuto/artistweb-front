@@ -31,6 +31,8 @@ const aboutMe = memo(function() {
   const [aboutMe, setAboutMe] = useState<IAboutMe | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
 
+  const dispatch: AppDispatch = useDispatch();
+
   useEffect(() => {
     const loadAboutMeData = async (jwtToken: string) => {
       const response = await axiosInstance.get("/fetchAboutMe", {
@@ -115,14 +117,14 @@ const aboutMe = memo(function() {
   }, [jwtToken]);
 
   useEffect(() => {
-    if(topics.length !== 0) {
+    if(topics.length !== 0 || aboutMe !== null) {
       dispatch(setIsAboutMeSectionRender(true))
     }
 
-  }, [topics])
+  }, [dispatch, topics, aboutMe])
 
   const { menuList } = useSelector((state: RootState) => state.menus);
-  const dispatch: AppDispatch = useDispatch();
+
 
   const aboutMeRef = useIntersection(
     {
